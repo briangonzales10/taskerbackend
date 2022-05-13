@@ -2,7 +2,6 @@ require("dotenv").config();
 
 const express = require("express");
 var cors = require("cors");
-// const axios = require("axios");
 const collection = require("./scripts/firestoreHelper");
 const fileUpload = require("express-fileupload");
 const path = require('path')
