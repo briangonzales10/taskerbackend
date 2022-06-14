@@ -33,8 +33,7 @@ app.use(fileUpload({
 
 // Get (get all route)
 app.get("/tasks/:id", async function (req, res) {
-  console.log(req.headers)
-  console.log(req.params.id)
+
   try {
     let tasks = await getService.getTasks(req.params.id);
     res.status(200).send(tasks);
@@ -47,12 +46,9 @@ app.get("/tasks/:id", async function (req, res) {
 
 // Get all tasks for 1 user
 app.get("/mytasks/:id", async function (req, res) {
-  console.log(req.headers)
-  console.log(req)
-  console.log(req.params.id)
+
   try {
     let tasks = await getService.getUserTasks(req.params.id);
-    console.log(tasks)
     res.status(200).send(tasks);
     console.log("# of User Tasks:" + tasks.length);
   } catch (err) {

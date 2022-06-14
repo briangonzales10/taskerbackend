@@ -13,7 +13,7 @@ const TIMESTAMP_LABEL = 'timestamp';
 
 exports.getTasks = async function getTasks(adminId) {
     console.log('getting getTasks()')
-    if (adminId == process.env.adminUid) {  //only ADMIN allowed to view all public & private tasks
+    if (adminId == process.env.ADMIN_UID) {  //only ADMIN allowed to view all public & private tasks
        return await getAllTasks();
     } else {
        return await getPublicTasks();
