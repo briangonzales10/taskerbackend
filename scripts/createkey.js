@@ -1,4 +1,5 @@
 require("dotenv").config();
+const path =require('path');
 const fs = require('fs');
 
 const serviceKey = {
@@ -13,7 +14,7 @@ const serviceKey = {
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_x509_cert_url": `${process.env.CLIENT_URL}`
   }
-const filepath = __dirname + '/resources/taskerdb-11614-firebase-adminsdk-81hw6-6e2a2a8d25.json'
+const filepath = path.join(__dirname, '..', 'resources', 'taskerdb-11614-firebase-adminsdk-81hw6-6e2a2a8d25.json')
 const data = JSON.stringify(serviceKey, 2, null);
 
 fs.writeFileSync(filepath, data, (err) => {
