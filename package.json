@@ -4,6 +4,7 @@
   "description": "task brian with things",
   "main": "index.js",
   "scripts": {
+    "predeploy": "./scripts/createkey.js",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
