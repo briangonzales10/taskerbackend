@@ -1,4 +1,6 @@
-node_modules/
+node_modules/*
 resources/
 .env
 node_modules
+node_modules/
+resources/taskerdb-11614-firebase-adminsdk-81hw6-6e2a2a8d25.json
