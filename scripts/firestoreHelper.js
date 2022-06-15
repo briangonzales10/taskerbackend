@@ -1,4 +1,4 @@
-const serviceAccount = require("../resources/taskerdb-11614-firebase-adminsdk-81hw6-6e2a2a8d25.json");
+const serviceAccount = require("google-credentials.json");
 const fs = require("firebase-admin");
 
 const {
