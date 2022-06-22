@@ -24,7 +24,7 @@ fs.initializeApp({
   const remotePath = '/uploads/proof'
 
 
-  exports.putFile = async function putFile(pathTofilename) {
+  exports.putFile = async function putFile(taskId, pathTofilename) {
     const fileMime = mime.lookup(pathTofilename);
 
     var myMetadata = {
@@ -33,7 +33,8 @@ fs.initializeApp({
     return bucket.upload(pathTofilename, {
       destination: remotePath,
       uploadType: "media",
-      metadata : myMetadata
+      metadata : myMetadata,
+      'proof': taskId
     })
     .then((data) => {
       let file = data[0]

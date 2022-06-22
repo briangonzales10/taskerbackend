@@ -141,7 +141,7 @@ app.post("/places", async function (req, res) {
 });
 
 // File Uploading
-app.post("/upload/:taskId", function (req, res) {
+app.post("/upload/:taskId", async function (req, res) {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
   }
@@ -151,8 +151,7 @@ app.post("/upload/:taskId", function (req, res) {
 
   let fileProof = req.files.proof
   let fileProofName = fileProof.name
-  let fileExtension = fileProofName.split('.').pop()
-  let fileChangedName = `${req.params.taskId}.${fileExtension}`
+
   console.log(`
   fileProof: ${fileProof}
   fileProofName: ${fileProofName}
@@ -160,7 +159,7 @@ app.post("/upload/:taskId", function (req, res) {
   fileChangedName: ${fileChangedName}
   `)
 
-  response = fshelper.putFile(fileChangedName);
+  let response = await fshelper.putFile(fileProofName);
 
   // fileProof.mv(path.join(uploadsPath, fileChangedName), function(err) {
   //   if (err)
