@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 var cors = require("cors");
-const collection = require("./scripts/firestoreHelper");
+const fshelper = require("./scripts/firestoreHelper");
 const fileUpload = require("express-fileupload");
 const path = require('path')
 const fs = require('fs')
@@ -103,19 +103,19 @@ app.delete("/delete/:taskId", async function (req, res) {
   const taskIdToDelete = req.params.taskId;
 
   console.log("DELETING TASK: " + taskIdToDelete);
-  await collection.tasklist.doc(taskIdToDelete).delete();
+  await fshelper.tasklist.doc(taskIdToDelete).delete();
   res.status(200).send("Task Deleted");
 });
 
 // Update Path /update to change status to complete
 app.put("/update/:taskId", async function (req, res) {
   const taskIdToUpdate = req.params.taskId;
-  const snapshot = await collection.tasklist.doc(taskIdToUpdate).get();
+  const snapshot = await fshelper.tasklist.doc(taskIdToUpdate).get();
   let reqStatusChange = req.body.status;
 
   let updateStatus = helper.findStatus(reqStatusChange);
   if (updateStatus !== "NONE") {
-    await collection.tasklist
+    await fshelper.tasklist
       .doc(taskIdToUpdate)
       .update({ status: updateStatus });
 
@@ -160,13 +160,15 @@ app.post("/upload/:taskId", function (req, res) {
   fileChangedName: ${fileChangedName}
   `)
 
-  fileProof.mv(path.join(uploadsPath, fileChangedName), function(err) {
-    if (err)
-    return res.status(500).send(err)
-  })
-  console.log(`File Uploaded for task ${req.params.taskId}: ${fileProof.name}`)
+  response = await fshelper.putFile(fileChangedName);
 
-  res.status(200).send("File uploaded successfully")
+  // fileProof.mv(path.join(uploadsPath, fileChangedName), function(err) {
+  //   if (err)
+  //   return res.status(500).send(err)
+  // })
+  console.log(`File Uploaded for task ${req.params.taskId}: ${fileProof.name}:  ${response}`)
+
+  res.status(200).send(`File uploaded successfully`)
 })
 
 // Get proof of task completion
@@ -179,7 +181,7 @@ app.get("/proof/:taskId",async function (req, res) {
   }
 
   let searchFiles = fs.readdirSync(uploadsPath)
-  console.log(searchFiles)
+  console.log(`SearchFiles: ${searchFiles}`)
 
   searchFiles.find(filename => {
     if (filename.includes(taskId)) {
@@ -198,3 +200,17 @@ app.get("/proof/:taskId",async function (req, res) {
     }
   })
 })
+
+async function searchForProof(taskId) {
+  //returns a full file path if file already exists
+  let searchFiles = fs.readdirSync(uploadsPath)
+  searchFiles.find(filename => {
+    console.log("starting array search")
+    if (filename.includes(taskId)) {
+      return path.join(uploadsPath, filename)
+    } else {
+      console.log("proof not found")
+      return null;
+    }
+  })
+}
