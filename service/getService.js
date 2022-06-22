@@ -1,3 +1,4 @@
+
 const collection = require('../scripts/firestoreHelper')
 const helper = require('../scripts/helper')
 
@@ -90,7 +91,7 @@ exports.getSingleTask = async function getSingleTask(taskId) {
 exports.submitTask = async function submitTask(data) {
     let booleanIsPublic = helper.getBoolean(data.isPublic);
 
-    let time = Timestamp.now();
+    let time = new Date.now();
 
     let taskObject = {
             timestamp: time, //backend derived
