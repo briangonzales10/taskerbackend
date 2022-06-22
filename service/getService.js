@@ -122,7 +122,7 @@ exports.submitTask = async function submitTask(data) {
             console.log(err);
         });
 
-        collection.users
+        fs.users
         .doc(data.uid)
         .update({
             submittedTasks: FieldValue.arrayUnion(myTaskId)
