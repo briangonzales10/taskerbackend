@@ -18,8 +18,6 @@ fs.initializeApp({
   });
   const db = fs.firestore();
 
-   fs.firestore.FieldValue.arrayUnion
-
   exports.tasklist = tasklistCollection = db.collection("tasklist");
   exports.users =  usersCollection = db.collection('users');
-  
+
