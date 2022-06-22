@@ -28,13 +28,13 @@ fs.initializeApp({
     const fileMime = mime.lookup(pathTofilename);
 
     var myMetadata = {
-      contentType: fileMime
+      contentType: fileMime,
+      'proof': taskId
     };
     return bucket.upload(pathTofilename, {
       destination: remotePath,
       uploadType: "media",
-      metadata : myMetadata,
-      'proof': taskId
+      metadata : myMetadata
     })
     .then((data) => {
       let file = data[0]
