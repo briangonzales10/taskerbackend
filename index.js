@@ -3,17 +3,21 @@ require("dotenv").config();
 const express = require("express");
 var cors = require("cors");
 const fshelper = require("./scripts/firestoreHelper");
-const fileUpload = require("express-fileupload");
 const path = require('path')
 const fs = require('fs')
+const multer = require('multer')
+
 
 let helper = require("./scripts/helper.js");
 let googlePlace = require("./scripts/googlePlace.js");
 let getService = require("./service/getService");
+let postService = require("./service/postService")
 
 const NO_TASKS = "No Tasks Available!";
 const uploadsPath = path.join(__dirname, 'uploads', 'proof')
-
+const upload = multer({
+  storage: multer.memoryStorage()
+})
 const PORT = process.env.PORT || 3000;
 var allowlist = ['https://sendtask.me', 'http://sendtask.me', 'http://localhost']
 var corsOptionsDelegate = function (req, callback) {
@@ -30,6 +34,8 @@ const app = express();
 app.listen(PORT, function() {
   console.log(`Listening on port ${PORT}`)
 });
+
+app.use(upload.single())
 app.use(cors())
 app.use(express.json());
 app.use(
@@ -37,12 +43,6 @@ app.use(
     extended: true,
   })
 );
-
-app.use(fileUpload({
-  safeFileNames: true,
-  createParentPath: true,
-  preserveExtension: true
-}))
 
 
 // Get (get all route)
@@ -155,31 +155,17 @@ app.post("/places",  async function (req, res) {
 });
 
 // File Uploading
-app.post("/upload/:taskId", async function (req, res) {
-  if (!req.files || Object.keys(req.files).length === 0) {
+app.post("/upload/:taskId", upload.single('file'), async function (req, res) {
+  if (!req.file) {
     return res.status(400).send('No files were uploaded.');
   }
   if (!req.params.taskId){
     return res.status(400).send('no task id provided!')
   }
-  
-  let fileProof = req.files.proof
-  let fileProofName = fileProof.name
 
-  console.log(`
-  fileProof: ${fileProof}
-  fileProofName: ${fileProofName}
-  `)
+  const result = await postService.uploadFile(req.params.taskId, req.file);
 
-  let response = await fshelper.putFile(fileProof);
-
-  // fileProof.mv(path.join(uploadsPath, fileChangedName), function(err) {
-  //   if (err)
-  //   return res.status(500).send(err)
-  // })
-  console.log(`File Uploaded for task ${req.params.taskId}: ${fileProof.name}:  ${response}`)
-
-  res.status(200).send(`File uploaded successfully`)
+  res.status(result.status).send(result.message)
 })
 
 // Get proof of task completion

@@ -22,27 +22,30 @@ fs.initializeApp({
   const db = fs.firestore();
   const bucket = fs.storage().bucket();
   const remotePath = '/uploads/proof'
+  const tasklist = tasklistCollection = db.collection("tasklist");
+  const users = usersCollection = db.collection('users');
 
 
-  exports.putFile = async function putFile(taskId, pathTofilename) {
-    const fileMime = mime.lookup(pathTofilename);
+  // exports.putFile = async function putFile(taskId, pathTofilename) {
+  //   const fileMime = mime.lookup(pathTofilename);
 
-    var myMetadata = {
-      contentType: fileMime,
-      'proof': taskId
-    };
-    return bucket.file(pathTofilename, {
-      destination: remotePath,
-      uploadType: "media",
-      metadata : myMetadata
-    })
-    .then((data) => {
-      let file = data[0]
-      return Promise.resolve(`https://firebasestorage.googleapis.com/v0/b/` + bucket.name + "/o/" + file.name)
-    })
-    .catch((err) => console.log(err));
-  }
-
-  exports.tasklist = tasklistCollection = db.collection("tasklist");
-  exports.users =  usersCollection = db.collection('users');
-
+  //   var myMetadata = {
+  //     contentType: fileMime,
+  //     'proof': taskId
+  //   };
+  //   return bucket.file(pathTofilename, {
+  //     destination: remotePath,
+  //     uploadType: "media",
+  //     metadata : myMetadata
+  //   })
+  //   .then((data) => {
+  //     let file = data[0]
+  //     return Promise.resolve(`https://firebasestorage.googleapis.com/v0/b/` + bucket.name + "/o/" + file.name)
+  //   })
+  //   .catch((err) => console.log(err));
+  // }
+module.exports = {
+  tasklist,
+  users,
+  bucket
+}
