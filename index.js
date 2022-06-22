@@ -162,7 +162,7 @@ app.post("/upload/:taskId", async function (req, res) {
   if (!req.params.taskId){
     return res.status(400).send('no task id provided!')
   }
-
+  
   let fileProof = req.files.proof
   let fileProofName = fileProof.name
 
@@ -171,7 +171,7 @@ app.post("/upload/:taskId", async function (req, res) {
   fileProofName: ${fileProofName}
   `)
 
-  let response = await fshelper.putFile(fileProofName);
+  let response = await fshelper.putFile(fileProof);
 
   // fileProof.mv(path.join(uploadsPath, fileChangedName), function(err) {
   //   if (err)
