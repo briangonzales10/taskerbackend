@@ -1,4 +1,5 @@
 const collection = require('../scripts/firestoreHelper')
+const helper = require('../scripts/helper')
 
 //Collection Field names
 const IS_COMPLETE = 'isComplete';

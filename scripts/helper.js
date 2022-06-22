@@ -27,10 +27,10 @@ exports.findStatus2 = function find(name) {
 };
 
 exports.getBoolean = function getBoolean(stringValue) {
-  if (stringValue === 'true') {
+  if (stringValue.toLowerCase() === 'true') {
     return true;
   }
-  else if (stringValue === 'false') {
+  else if (stringValue.toLowerCase() === 'false') {
     return false;
   } else {
     return true;

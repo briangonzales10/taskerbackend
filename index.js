@@ -94,7 +94,7 @@ app.post("/add", async function (req, res) {
     res.status(200).send(`Thank You! Your task: "${data.taskname}" has been added!`);
   } catch (error) {
     console.warn(error);
-    res.status(400).send("task could not bet added");
+    res.status(400).send("task could not be added");
   }
 });
 
