@@ -15,14 +15,22 @@ const NO_TASKS = "No Tasks Available!";
 const uploadsPath = path.join(__dirname, 'uploads', 'proof')
 
 const PORT = process.env.PORT || 3000;
-const corsOptions = {
-  origin: 'https://sendtask.me' || 'localhost',
-  optionsSuccessStatus: 200
+var allowlist = ['https://sendtask.me', 'http://sendtask.me', 'http://localhost']
+var corsOptionsDelegate = function (req, callback) {
+  var corsOptions;
+  if (allowlist.indexOf(req.header('Origin')) !== -1) {
+    corsOptions = { origin: true } 
+  } else {
+    corsOptions = { origin: false } 
+  }
+  callback(null, corsOptions) 
 }
 
 const app = express();
-app.listen(PORT);
-app.use(cors(corsOptions));
+app.listen(PORT, function() {
+  console.log(`Listening on port ${PORT}`)
+});
+
 app.use(express.json());
 app.use(
   express.urlencoded({
@@ -38,7 +46,7 @@ app.use(fileUpload({
 
 
 // Get (get all route)
-app.get("/tasks/:id", async function (req, res) {
+app.get("/tasks/:id", cors(corsOptionsDelegate), async function (req, res) {
 
   try {
     let tasks = await getService.getTasks(req.params.id);
@@ -51,7 +59,7 @@ app.get("/tasks/:id", async function (req, res) {
 });
 
 // Get all tasks for 1 user
-app.get("/mytasks/:id", async function (req, res) {
+app.get("/mytasks/:id", cors(corsOptionsDelegate), async function (req, res) {
 
   try {
     let tasks = await getService.getUserTasks(req.params.id);
@@ -64,7 +72,7 @@ app.get("/mytasks/:id", async function (req, res) {
 });
 
 // Task (get single)
-app.get("/task/:taskId", async function (req, res) {
+app.get("/task/:taskId", cors(corsOptionsDelegate), async function (req, res) {
   let task;
   console.log(req)
   try {
@@ -78,7 +86,7 @@ app.get("/task/:taskId", async function (req, res) {
 });
 
 // Add (post)
-app.post("/add", async function (req, res) {
+app.post("/add", cors(corsOptionsDelegate), async function (req, res) {
   const data = req.body;
 
   console.log(data);
@@ -105,7 +113,7 @@ app.post("/add", async function (req, res) {
 });
 
 // Delete{id} delete route
-app.delete("/delete/:taskId", async function (req, res) {
+app.delete("/delete/:taskId", cors(corsOptionsDelegate), async function (req, res) {
   const taskIdToDelete = req.params.taskId;
 
   console.log("DELETING TASK: " + taskIdToDelete);
@@ -114,7 +122,7 @@ app.delete("/delete/:taskId", async function (req, res) {
 });
 
 // Update Path /update to change status to complete
-app.put("/update/:taskId", async function (req, res) {
+app.put("/update/:taskId", cors(corsOptionsDelegate), async function (req, res) {
   const taskIdToUpdate = req.params.taskId;
   const snapshot = await fshelper.tasklist.doc(taskIdToUpdate).get();
   let reqStatusChange = req.body.status;
@@ -133,7 +141,7 @@ app.put("/update/:taskId", async function (req, res) {
   }
 });
 
-app.post("/places", async function (req, res) {
+app.post("/places", cors(corsOptionsDelegate), async function (req, res) {
   const data = req.body;
   console.log(req);
   console.log(`Searching for: ${data.address}`);
@@ -147,7 +155,7 @@ app.post("/places", async function (req, res) {
 });
 
 // File Uploading
-app.post("/upload/:taskId", async function (req, res) {
+app.post("/upload/:taskId", cors(corsOptionsDelegate), async function (req, res) {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send('No files were uploaded.');
   }
@@ -175,7 +183,7 @@ app.post("/upload/:taskId", async function (req, res) {
 })
 
 // Get proof of task completion
-app.get("/proof/:taskId",async function (req, res) {
+app.get("/proof/:taskId", cors(corsOptionsDelegate), async function (req, res) {
   console.log('Searching for proof')
   let taskId = req.params.taskId
   if (!taskId) {
