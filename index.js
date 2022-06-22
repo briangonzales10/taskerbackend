@@ -15,15 +15,21 @@ const NO_TASKS = "No Tasks Available!";
 const uploadsPath = path.join(__dirname, 'uploads', 'proof')
 
 const PORT = process.env.PORT || 3000;
+const corsOptions = {
+  origin: 'https://sendtask.me' || 'localhost',
+  optionsSuccessStatus: 200
+}
+
 const app = express();
 app.listen(PORT);
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(
   express.urlencoded({
     extended: true,
   })
 );
-app.use(cors());
+
 app.use(fileUpload({
   safeFileNames: true,
   createParentPath: true,
@@ -155,8 +161,6 @@ app.post("/upload/:taskId", async function (req, res) {
   console.log(`
   fileProof: ${fileProof}
   fileProofName: ${fileProofName}
-  fileExtension: ${fileExtension}
-  fileChangedName: ${fileChangedName}
   `)
 
   let response = await fshelper.putFile(fileProofName);
