@@ -1,5 +1,9 @@
-const collection = require('../scripts/firestoreHelper')
+const fs = require('../scripts/firestoreHelper')
 const helper = require('../scripts/helper')
+const {
+    Timestamp,
+    FieldValue,
+  } = require("firebase-admin/firestore");
 
 //Collection Field names
 const IS_COMPLETE = 'isComplete';
@@ -25,7 +29,7 @@ exports.getTasks = async function getTasks(adminId) {
 async function getAllTasks() {  
     try {
         let tasks = []
-        const snapshot = await collection.tasklist.orderBy(TIMESTAMP_LABEL).get();
+        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL).get();
         snapshot.forEach (doc => {
             // console.log(doc.id, '=>', doc.data())
             tasks.push({ taskid: doc.id, data: doc.data() });              
@@ -39,7 +43,7 @@ async function getAllTasks() {
 async function getPublicTasks() {
     try {
         let tasks = []
-        const snapshot = await collection.tasklist.orderBy(TIMESTAMP_LABEL).get();
+        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL).get();
         snapshot.forEach (doc => {
             // console.log(doc.id, '=>', doc.data())
             if (doc.data().isPublic === true) {
@@ -53,14 +57,10 @@ async function getPublicTasks() {
 }
 
 exports.getUserTasks = async function getUserTasks(userId) {
-    // let user = await collection.users.doc(userId).get()
-    // let userTasks = user.data().submittedTasks.taskid;
-    // console.log(userTasks)
-    // console.log(userTasks[1])
 
     let tasks = []
     try {
-        const snapshot = await collection.tasklist.where(SUBMITTED_BY, '==', userId).get();
+        const snapshot = await fs.tasklist.where(SUBMITTED_BY, '==', userId).get();
         snapshot.forEach (doc => {
             console.log(doc.id, '=>', doc.data())
             tasks.push({ taskid: doc.id, data: doc.data() }); 
@@ -75,7 +75,7 @@ exports.getUserTasks = async function getUserTasks(userId) {
 exports.getSingleTask = async function getSingleTask(taskId) {
     let task;
     try {
-      const singleTask = await collection.tasklist.doc(taskId).get();
+      const singleTask = await fs.tasklist.doc(taskId).get();
   
       task = { taskid: singleTask.id, data: singleTask.data() };
   
@@ -90,7 +90,7 @@ exports.getSingleTask = async function getSingleTask(taskId) {
 exports.submitTask = async function submitTask(data) {
     let booleanIsPublic = helper.getBoolean(data.isPublic);
 
-    let time = new Date().valueOf();
+    let time = Timestamp.now();
 
     let taskObject = {
             timestamp: time, //backend derived
@@ -112,7 +112,7 @@ exports.submitTask = async function submitTask(data) {
     console.log(taskObject);
     try {
         let myTaskId;
-        let taskIdNew = await collection.tasklist
+        let taskIdNew = await fs.tasklist
         .add(taskObject)
         .then((results) => {
             console.log(results);
@@ -125,7 +125,7 @@ exports.submitTask = async function submitTask(data) {
         collection.users
         .doc(data.uid)
         .update({
-            submittedTasks: FieldValue.arrayUnion(myTaskId),
+            submittedTasks: FieldValue.arrayUnion(myTaskId)
         })
         .then((res) => {
             console.log(res);
