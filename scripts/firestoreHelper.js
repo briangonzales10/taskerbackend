@@ -31,7 +31,7 @@ fs.initializeApp({
       contentType: fileMime,
       'proof': taskId
     };
-    return bucket.upload(pathTofilename, {
+    return bucket.file(pathTofilename, {
       destination: remotePath,
       uploadType: "media",
       metadata : myMetadata
