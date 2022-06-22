@@ -155,7 +155,7 @@ app.post("/places",  async function (req, res) {
 });
 
 // File Uploading
-app.post("/upload/:taskId", upload.single('file'), async function (req, res) {
+app.post("/upload/:taskId", upload.single('proof'), async function (req, res) {
   if (!req.file) {
     return res.status(400).send('No files were uploaded.');
   }
