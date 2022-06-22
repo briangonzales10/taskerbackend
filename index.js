@@ -170,32 +170,33 @@ app.post("/upload/:taskId", upload.single('file'), async function (req, res) {
 
 // Get proof of task completion
 app.get("/proof/:taskId", async function (req, res) {
-  console.log('Searching for proof')
-  let taskId = req.params.taskId
-  if (!taskId) {
-    console.log('Searching for proof with no task Id')
-    return res.status(400).send({'status': 'fail', 'message': 'no task Id Provided'})
-  }
+  // console.log('Searching for proof')
+  // let taskId = req.params.taskId
+  // if (!taskId) {
+  //   console.log('Searching for proof with no task Id')
+  //   return res.status(400).send({'status': 'fail', 'message': 'no task Id Provided'})
+  // }
 
-  let searchFiles = fs.readdirSync(uploadsPath)
-  console.log(`SearchFiles: ${searchFiles}`)
+  // let searchFiles = fs.readdirSync(uploadsPath)
+  // console.log(`SearchFiles: ${searchFiles}`)
 
-  searchFiles.find(filename => {
-    if (filename.includes(taskId)) {
-      console.log('starting array search')
-      fullFilePath = path.join(uploadsPath, filename)
-      console.log(`FilePath Requested: ${fullFilePath}`)
-      res.status(200).sendFile(fullFilePath, (err) => {
-        if (err) {
-          console.log(err)
-        }
-      })
-    }
-    else {
-      console.log('no proof found')
-      res.status(400).send({'status': 'fail', 'message': 'an error occured finding file'})
-    }
-  })
+  // searchFiles.find(filename => {
+  //   if (filename.includes(taskId)) {
+  //     console.log('starting array search')
+  //     fullFilePath = path.join(uploadsPath, filename)
+  //     console.log(`FilePath Requested: ${fullFilePath}`)
+  //     res.status(200).sendFile(fullFilePath, (err) => {
+  //       if (err) {
+  //         console.log(err)
+  //       }
+  //     })
+  //   }
+  //   else {
+  //     console.log('no proof found')
+  //     res.status(400).send({'status': 'fail', 'message': 'an error occured finding file'})
+  //   }
+  // })
+  res.send(200)
 })
 
 async function searchForProof(taskId) {
