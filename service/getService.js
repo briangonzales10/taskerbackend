@@ -134,6 +134,6 @@ exports.submitTask = async function submitTask(data) {
             console.log(err);
         });
     } catch (err) {
-        console.log(error)
+        console.log(err)
     }
 }
