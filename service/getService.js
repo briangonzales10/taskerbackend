@@ -112,7 +112,7 @@ exports.submitTask = async function submitTask(data) {
     console.log(taskObject);
     try {
         let myTaskId;
-        let taskIdNew = await fs.tasklist
+        await fs.tasklist
         .add(taskObject)
         .then((results) => {
             console.log(results);
