@@ -160,7 +160,7 @@ app.post("/upload/:taskId", function (req, res) {
   fileChangedName: ${fileChangedName}
   `)
 
-  response = await fshelper.putFile(fileChangedName);
+  response = fshelper.putFile(fileChangedName);
 
   // fileProof.mv(path.join(uploadsPath, fileChangedName), function(err) {
   //   if (err)
