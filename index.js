@@ -172,14 +172,17 @@ app.post("/upload/:taskId", async function (req, res) {
   }
 
   // Always update proof when posting a file!
-  const result = await fshelper.uploadFile(taskId, req.file)
-    .then((res) => {
-      postService.updateProof(taskId, res.signedURL)
-    })
-
-  console.log(`INDEX TASK: ${taskId} / URL: ${res.signedURL}`)
+  await fshelper.uploadFile(taskId, req.file)
+    .then((uploadRes) => {
   
-  res.status(result.status).send(result.message)
+      console.log(`INDEX TASK: ${taskId} / URL: ${uploadRes}`);
+      postService.updateProof(taskId, uploadRes.signedURL);
+      res.sendStatus(200).send(`${req.file.originalname} was uploaded!`)
+    })
+    .catch((err) => {
+      console.log(err);
+      res.sendStatus(500).send(`File could not be uploaded for task Id: ${taskId}`)
+    })
   })
 })
 

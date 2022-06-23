@@ -26,11 +26,7 @@ fs.initializeApp({
 
   const uploadFile = async (taskId, file) => {
     console.log("starting upload")
-    const res = {
-        'status': 200,
-        'message': '',
-        'signedURL': ''
-    }
+
     const blob = bucket.file('proof/' + file.originalname)
     const blobWriter = blob.createWriteStream({
         metadata: {
@@ -40,14 +36,9 @@ fs.initializeApp({
     });
     blobWriter.on('error', (err) => {
         console.log(err)
-        res.status = 500
-        res.message = `File could not be uploaded for task Id: ${taskId}`
     });
     blobWriter.on('finish', () => {
-        
-        res.status = 200
-        res.message = `File uploaded for task Id: ${taskId}` 
-        console.log(res.message)
+        console.log('Finished uploading')
     })
     blobWriter.end(file.buffer)
 
@@ -58,11 +49,11 @@ fs.initializeApp({
     })
     .then(signedUrls => {
       // signedUrls[0] contains the file's public URL
-      res.signedURL = signedUrls[0]
-      console.log(`TASK: ${taskId} / URL: ${res.signedURL}`)
+      const signedURL = signedUrls[0]
+      console.log(`TASK: ${taskId} / URL: ${signedURL}`)
+      return signedURL
     })
     .catch((err) => console.log(err));
-    return res;
 };
 
 
