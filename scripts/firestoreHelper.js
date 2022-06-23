@@ -1,6 +1,5 @@
 const serviceAccount = require("../google-credentials.json");
 const fs = require("firebase-admin");
-const post = require('../service/postService')
 
 
 const {
@@ -22,7 +21,6 @@ fs.initializeApp({
   });
   const db = fs.firestore();
   const bucket = fs.storage().bucket();
-  const remotePath = '/uploads/proof'
   const tasklist = tasklistCollection = db.collection("tasklist");
   const users = usersCollection = db.collection('users');
 
@@ -45,7 +43,7 @@ fs.initializeApp({
         res.status = 500
         res.message = `File could not be uploaded for task Id: ${taskId}`
     });
-    blobWriter.on('finish', (result) => {
+    blobWriter.on('finish', () => {
         
         res.status = 200
         res.message = `File uploaded for task Id: ${taskId}` 
@@ -62,7 +60,6 @@ fs.initializeApp({
       // signedUrls[0] contains the file's public URL
       res.signedURL = signedUrls[0]
       console.log(`TASK: ${taskId} / URL: ${res.signedURL}`)
-      post.updateProof(taskId, res.signedURL)
     })
     .catch((err) => console.log(err));
     return res;
