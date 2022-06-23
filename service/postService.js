@@ -10,7 +10,6 @@ exports.uploadFile = async function uploadFile(taskId, file) {
     const blobWriter = blob.createWriteStream({
         metadata: {
             contentType: file.mimetype,
-            'proof': taskId
         }
     });
     blobWriter.on('error', (err) => {
