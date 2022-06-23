@@ -3,9 +3,9 @@ require("dotenv").config();
 const express = require("express");
 var cors = require("cors");
 const fshelper = require("./scripts/firestoreHelper");
-const path = require('path')
-const fs = require('fs')
-const multer = require('multer')
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 
 
 let helper = require("./scripts/helper.js");
@@ -16,7 +16,8 @@ let postService = require("./service/postService")
 const NO_TASKS = "No Tasks Available!";
 const uploadsPath = path.join(__dirname, 'uploads', 'proof')
 const upload = multer({
-  storage: multer.memoryStorage()
+  storage: multer.memoryStorage(),
+  dest: 'uploads/proof'
 })
 const PORT = process.env.PORT || 3000;
 var allowlist = ['https://sendtask.me', 'http://sendtask.me', 'http://localhost']
