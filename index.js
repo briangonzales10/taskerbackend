@@ -181,10 +181,10 @@ app.post("/upload/:taskId", async function (req, res) {
 
 
 // Get proof of task completion
-app.get("/proof/:taskId", async function (req, res) {
-  //const proofName = await getService.getProof(req.params.taskId)
-  res.sendStatus(200).send('proofName')
-})
+// app.get("/proof/:taskId", async function (req, res) {
+//   //const proofName = await getService.getProof(req.params.taskId)
+//   res.sendStatus(200).send('proofName')
+// })
 
 async function searchForProof(taskId) {
   //returns a full file path if file already exists
