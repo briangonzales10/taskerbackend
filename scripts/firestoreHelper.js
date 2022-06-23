@@ -24,7 +24,7 @@ fs.initializeApp({
   const tasklist = tasklistCollection = db.collection("tasklist");
   const users = usersCollection = db.collection('users');
 
-  const  uploadFile = (taskId, file) => {
+  const uploadFile = async (taskId, file) => {
     console.log("starting upload")
     const res = {
         'status': 200,
