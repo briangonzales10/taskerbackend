@@ -57,11 +57,14 @@ fs.initializeApp({
     blob.getSignedUrl({
       action: 'read',
       expires: '03-09-2491'
-    }).then(signedUrls => {
+    })
+    .then(signedUrls => {
       // signedUrls[0] contains the file's public URL
       res.signedURL = signedUrls[0]
+      console.log(`TASK: ${taskId} / URL: ${res.signedURL}`)
       post.updateProof(taskId, res.signedURL)
-    });
+    })
+    .catch((err) => console.log(err));
     return res;
 };
 

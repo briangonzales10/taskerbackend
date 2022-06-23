@@ -95,7 +95,7 @@ exports.getProof = function getProof(taskId) {
     fs.bucket.getFiles({prefix: 'proof/', delimiter: '/', autoPaginate: false})
         .then( (fileArray) => {
             fileArray.forEach( (file) => {
-                console.log(`METADATA:` + file.getMetadata())
+                console.log(`METADATA:` + file)
             })
         })
         .catch(err => console.log(err))
