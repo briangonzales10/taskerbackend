@@ -7,10 +7,11 @@ exports.uploadFile = async function uploadFile(taskId, file) {
         'status': '',
         'message': ''
     }
-    const blob = fsHelper.bucket.file(file.filename)
+    const blob = fsHelper.bucket.file(file.originalname)
     const blobWriter = blob.createWriteStream({
         metadata: {
             contentType: file.mimetype,
+            'proof': req.params.taskId
         }
     });
     blobWriter.on('error', (err) => {
