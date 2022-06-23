@@ -87,9 +87,6 @@ exports.getSingleTask = async function getSingleTask(taskId) {
     return task;
 }
 
-
-
-
 exports.getProof = function getProof(taskId) {
     let proofArray = [];
     fs.bucket.getFiles({prefix: 'proof/', delimiter: '/', autoPaginate: false})
