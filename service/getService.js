@@ -144,8 +144,9 @@ exports.getProof = function getProof(taskId) {
     fs.bucket.getFiles({prefix: 'proof/', delimiter: '/', autoPaginate: false})
         .then( (file) => {
             const jsonFile = JSON.stringify(file)
-            console.log(jsonFile)
-            console.log(jsonFile.metadata)
+            console.log(file[0])
+            console.log(file[1])
+            console.log(file[2])
             if (file.metadata.proof == taskId) {
                 return file.name;
             }
