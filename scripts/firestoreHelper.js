@@ -24,7 +24,7 @@ fs.initializeApp({
   const tasklist = tasklistCollection = db.collection("tasklist");
   const users = usersCollection = db.collection('users');
 
-  const uploadFile = async (taskId, file) => {
+  const uploadFile = (taskId, file) => {
     console.log("starting upload")
 
     const blob = bucket.file('proof/' + file.originalname)
@@ -47,11 +47,10 @@ fs.initializeApp({
       action: 'read',
       expires: '03-09-2491'
     })
-    .then(signedUrls => {
+    .then((signedUrls) => {
       // signedUrls[0] contains the file's public URL
-      const signedURL = signedUrls[0]
       // console.log(`TASK: ${taskId} / URL: ${signedURL}`)
-      return signedURL
+      return signedUrls[0];
     })
     .catch((err) => console.log(err));
 };
