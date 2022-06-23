@@ -176,69 +176,10 @@ app.post("/upload/:taskId", function (req, res) {
   })
 })
 
-// File Uploading
-// app.post("/upload/:taskId", function (req, res) {
-//   upload(req, res, async function(err) {
-//     if (err instanceof multer.MulterError) {
-//       console.log(err)
-//     } else if (err) {
-//       console.log(err)
-//     }
-//       if (!req.file) {
-//     return res.status(400).send('No files were uploaded.');
-//   }
-//   if (!req.params.taskId){
-//     return res.status(400).send('no task id provided!')
-//   }
-
-//   const blob = fs.bucket.file(req.file.originalname)
-//   const blobWriter = blob.createWriteStream({
-//       metadata: {
-//           contentType: req.file.mimetype,
-//           'proof': req.params.taskId
-//       }
-//   });
-//   blobWriter.on('error', (err) => {
-//       console.log(err)
-//       res.sendStatus(500)
-//       res.send(`File could not be uploaded for task Id: ${taskId}`)
-//   });
-//   blobWriter.on('finish', () => {
-//     res.sendStatus(200)
-//     res.send(`File uploaded for task Id: ${taskId}`)
-//   })
-//   blobWriter.end(req.file.buffer)
-//   })
-// })
 
 // Get proof of task completion
 app.get("/proof/:taskId", async function (req, res) {
-  // console.log('Searching for proof')
-  // let taskId = req.params.taskId
-  // if (!taskId) {
-  //   console.log('Searching for proof with no task Id')
-  //   return res.status(400).send({'status': 'fail', 'message': 'no task Id Provided'})
-  // }
-
-  // let searchFiles = fs.readdirSync(uploadsPath)
-  // console.log(`SearchFiles: ${searchFiles}`)
-
-  // searchFiles.find(filename => {
-  //   if (filename.includes(taskId)) {
-  //     console.log('starting array search')
-  //     fullFilePath = path.join(uploadsPath, filename)
-  //     console.log(`FilePath Requested: ${fullFilePath}`)
-  //     res.status(200).sendFile(fullFilePath, (err) => {
-  //       if (err) {
-  //         console.log(err)
-  //       }
-  //     })
-  //   }
-  //   else {
-  //     console.log('no proof found')
-  //     res.status(400).send({'status': 'fail', 'message': 'an error occured finding file'})
-  //   }
-  // })
+  postService.getProof(req.params.taskId)
   res.send(200)
 })
 

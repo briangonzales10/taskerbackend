@@ -136,4 +136,17 @@ exports.submitTask = async function submitTask(data) {
     } catch (err) {
         console.log(err)
     }
+
+    exports.getProof = function getProof(taskId) {
+        let proofArray = [];
+        fs.bucket.getFiles({prefix: '/proof', autoPaginate: false})
+            .then( (file) => {
+                console.log(file)
+            })
+            .catch(err => console.log(err))
+    };
+
+    function cacheProof(file) {
+
+    }
 }
