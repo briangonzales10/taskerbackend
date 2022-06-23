@@ -141,7 +141,7 @@ exports.submitTask = async function submitTask(data) {
 
 exports.getProof = function getProof(taskId) {
     let proofArray = [];
-    fs.bucket.getFiles({prefix: '/proof', autoPaginate: false})
+    fs.bucket.getFiles({prefix: 'proof/', delimiter: '/', autoPaginate: false})
         .then( (file) => {
             console.log(file)
         })
