@@ -155,6 +155,27 @@ app.post("/places",  async function (req, res) {
   }
 });
 
+// // File Uploading
+// app.post("/upload/:taskId", function (req, res) {
+//   upload(req, res, async function(err) {
+//     if (err instanceof multer.MulterError) {
+//       console.log(err)
+//     } else if (err) {
+//       console.log(err)
+//     }
+//       if (!req.file) {
+//     return res.status(400).send('No files were uploaded.');
+//   }
+//   if (!req.params.taskId){
+//     return res.status(400).send('no task id provided!')
+//   }
+
+//   const result = await postService.uploadFile(req.params.taskId, req.file);
+
+//   res.status(result.status).send(result.message)
+//   })
+// })
+
 // File Uploading
 app.post("/upload/:taskId", function (req, res) {
   upload(req, res, async function(err) {
@@ -170,9 +191,22 @@ app.post("/upload/:taskId", function (req, res) {
     return res.status(400).send('no task id provided!')
   }
 
-  const result = await postService.uploadFile(req.params.taskId, req.file);
-
-  res.status(result.status).send(result.message)
+  const blob = fs.bucket.file(req.file.filename)
+  const blobWriter = blob.createWriteStream({
+      metadata: {
+          contentType: req.file.mimetype,
+      }
+  });
+  blobWriter.on('error', (err) => {
+      console.log(err)
+      res.sendStatus(500)
+      res.send(`File could not be uploaded for task Id: ${taskId}`)
+  });
+  blobWriter.on('finish', () => {
+    res.sendStatus(200)
+    res.send(`File uploaded for task Id: ${taskId}`)
+  })
+  blobWriter.end(req.file.buffer)
   })
 })
 
