@@ -2,11 +2,12 @@ const fsHelper = require('../scripts/firestoreHelper')
 
 
 exports.uploadFile = async function uploadFile(taskId, file) {
+    console.log("starting upload")
     const res = {
         'status': '',
         'message': ''
     }
-    const blob = fsHelper.bucket.file(file)
+    const blob = fsHelper.bucket.file(file.filename)
     const blobWriter = blob.createWriteStream({
         metadata: {
             contentType: file.mimetype,
