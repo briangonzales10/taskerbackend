@@ -52,7 +52,9 @@ fs.initializeApp({
         console.log(res.message)
     })
     blobWriter.end(file.buffer)
-    file.getSignedUrl({
+
+    //
+    blob.getSignedUrl({
       action: 'read',
       expires: '03-09-2491'
     }).then(signedUrls => {
