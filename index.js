@@ -174,7 +174,7 @@ app.post("/upload/:taskId", async function (req, res) {
   // Always update proof when posting a file!
   const results = '';
   try {
-    results = await fshelper.uploadFile(taskId, req.file);
+    results = await fshelper.uploadFileHandler(taskId, req.file);
   }
   catch (err) {
     console.log(err);

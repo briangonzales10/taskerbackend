@@ -24,45 +24,47 @@ fs.initializeApp({
   const tasklist = tasklistCollection = db.collection("tasklist");
   const users = usersCollection = db.collection('users');
 
-  const uploadFile = (taskId, file) => {
-    return new Promise( resolve => {
-    
-      console.log("starting upload")
-
-      const blob = bucket.file('proof/' + file.originalname)
-      const blobWriter = blob.createWriteStream({
-          metadata: {
-              contentType: file.mimetype,
-              metadata: { 'proof': taskId }
-          }
-      });
-      blobWriter.on('error', (err) => {
-          console.log(err)
-          
-      });
-      blobWriter.on('finish', () => {
-          console.log('Finished uploading')
-      })
-      blobWriter.end(file.buffer)
-  
-      //
-      blob.getSignedUrl({
-        action: 'read',
-        expires: '03-09-2491'
-      })
-      .then((signedUrls) => {
-        // signedUrls[0] contains the file's public URL
-        // console.log(`TASK: ${taskId} / URL: ${signedURL}`)
-        resolve(signedUrls[0])
-      })
-      .catch((err) => console.log(err));
-    });
+  const uploadFileHandler = async (taskId, file) => {
+    return new Promise((resolve, reject) => {
+      resolve(uploadFile(taskId, file));
+    })
   }
+
+  const uploadFile = async (taskId, file) => {
+    console.log("starting upload")
+
+    const blob = bucket.file('proof/' + file.originalname)
+    const blobWriter = blob.createWriteStream({
+        metadata: {
+            contentType: file.mimetype,
+            metadata: { 'proof': taskId }
+        }
+    });
+    blobWriter.on('error', (err) => {
+        console.log(err)
+    });
+    blobWriter.on('finish', () => {
+        console.log('Finished uploading')
+    })
+    blobWriter.end(file.buffer)
+
+    //
+    blob.getSignedUrl({
+      action: 'read',
+      expires: '03-09-2491'
+    })
+    .then((signedUrls) => {
+      // signedUrls[0] contains the file's public URL
+      // console.log(`TASK: ${taskId} / URL: ${signedURL}`)
+      return signedUrls[0];
+    })
+    .catch((err) => console.log(err));
+};
 
 
 module.exports = {
   tasklist,
   users,
   bucket,
-  uploadFile
+  uploadFileHandler
 }
