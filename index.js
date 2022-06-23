@@ -104,7 +104,7 @@ app.post("/add", async function (req, res) {
     return;
   }
   try {
-    await getService.submitTask(data)
+    await postService.submitTask(data)
 
     res.status(200).send(`Thank You! Your task: "${data.taskname}" has been added!`);
   } catch (error) {
@@ -170,7 +170,7 @@ app.post("/upload/:taskId", function (req, res) {
     return res.status(400).send('no task id provided!')
   }
 
-  const result = await postService.uploadFile(req.params.taskId, req.file);
+  const result = await fshelper.uploadFile(req.params.taskId, req.file);
 
   res.status(result.status).send(result.message)
   })
