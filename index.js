@@ -18,7 +18,7 @@ const uploadsPath = path.join(__dirname, 'uploads', 'proof')
 const upload = multer({
   storage: multer.memoryStorage(),
   dest: 'uploads/proof'
-})
+}).single('file')
 const PORT = process.env.PORT || 3000;
 var allowlist = ['https://sendtask.me', 'http://sendtask.me', 'http://localhost']
 var corsOptionsDelegate = function (req, callback) {
@@ -36,7 +36,7 @@ app.listen(PORT, function() {
   console.log(`Listening on port ${PORT}`)
 });
 
-app.use(upload.single())
+// app.use(upload)
 app.use(cors())
 app.use(express.json());
 app.use(
@@ -156,8 +156,14 @@ app.post("/places",  async function (req, res) {
 });
 
 // File Uploading
-app.post("/upload/:taskId", upload.single('file'), async function (req, res) {
-  if (!req.file) {
+app.post("/upload/:taskId", async function (req, res) {
+  upload(req, res, function(err) {
+    if (err instanceof multer.MulterError) {
+      console.log(err)
+    } else if (err) {
+      console.log(err)
+    }
+      if (!req.file) {
     return res.status(400).send('No files were uploaded.');
   }
   if (!req.params.taskId){
@@ -167,6 +173,7 @@ app.post("/upload/:taskId", upload.single('file'), async function (req, res) {
   const result = await postService.uploadFile(req.params.taskId, req.file);
 
   res.status(result.status).send(result.message)
+  })
 })
 
 // Get proof of task completion
