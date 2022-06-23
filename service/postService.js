@@ -4,7 +4,7 @@ const fsHelper = require('../scripts/firestoreHelper')
 exports.uploadFile = async function uploadFile(taskId, file) {
     console.log("starting upload")
     const res = {
-        'status': '',
+        'status': 200,
         'message': ''
     }
     const blob = fsHelper.bucket.file(file.originalname)
