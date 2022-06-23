@@ -176,7 +176,7 @@ app.post("/upload/:taskId", async function (req, res) {
     .then((uploadRes) => {
   
       console.log(`INDEX TASK: ${taskId} / URL: ${uploadRes}`);
-      postService.updateProof(taskId, uploadRes.signedURL);
+      postService.updateProof(taskId, uploadRes);
       res.sendStatus(200).send(`${req.file.originalname} was uploaded!`)
     })
     .catch((err) => {
