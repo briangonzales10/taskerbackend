@@ -18,7 +18,7 @@ const {
 fs.initializeApp({
     credential: fs.credential.cert(serviceAccount),
     storageBucket: `${process.env.PROJECT_ID}.appspot.com`,
-    databaseURL: `${process.env.PROJECT_ID}.firebaseio.com`
+    databaseURL: `https://${process.env.PROJECT_ID}.firebaseio.com`
   });
   const db = fs.firestore();
   const bucket = fs.storage().bucket();
