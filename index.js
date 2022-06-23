@@ -179,7 +179,7 @@ app.post("/upload/:taskId", function (req, res) {
 
 // Get proof of task completion
 app.get("/proof/:taskId", async function (req, res) {
-  postService.getProof(req.params.taskId)
+  getService.getProof(req.params.taskId)
   res.send(200)
 })
 
