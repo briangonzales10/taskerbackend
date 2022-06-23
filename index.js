@@ -191,7 +191,7 @@ app.post("/upload/:taskId", function (req, res) {
     return res.status(400).send('no task id provided!')
   }
 
-  const blob = fs.bucket.file(req.file.filename)
+  const blob = fs.bucket.file(req.file.originalname)
   const blobWriter = blob.createWriteStream({
       metadata: {
           contentType: req.file.mimetype,
