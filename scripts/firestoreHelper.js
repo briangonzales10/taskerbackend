@@ -26,7 +26,7 @@ fs.initializeApp({
   const tasklist = tasklistCollection = db.collection("tasklist");
   const users = usersCollection = db.collection('users');
 
-  exports.uploadFile = async function uploadFile(taskId, file) {
+  const  uploadFile = (taskId, file) => {
     console.log("starting upload")
     const res = {
         'status': 200,
@@ -67,5 +67,6 @@ fs.initializeApp({
 module.exports = {
   tasklist,
   users,
-  bucket
+  bucket,
+  uploadFile
 }
