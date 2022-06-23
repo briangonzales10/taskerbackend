@@ -3,9 +3,9 @@ require("dotenv").config();
 const express = require("express");
 var cors = require("cors");
 const fshelper = require("./scripts/firestoreHelper");
-const path = require('path')
-const fs = require('fs')
-const multer = require('multer')
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 
 
 let helper = require("./scripts/helper.js");
@@ -16,8 +16,9 @@ let postService = require("./service/postService")
 const NO_TASKS = "No Tasks Available!";
 const uploadsPath = path.join(__dirname, 'uploads', 'proof')
 const upload = multer({
-  storage: multer.memoryStorage()
-})
+  storage: multer.memoryStorage(),
+  dest: 'uploads/proof'
+}).single('file')
 const PORT = process.env.PORT || 3000;
 var allowlist = ['https://sendtask.me', 'http://sendtask.me', 'http://localhost']
 var corsOptionsDelegate = function (req, callback) {
@@ -35,7 +36,7 @@ app.listen(PORT, function() {
   console.log(`Listening on port ${PORT}`)
 });
 
-app.use(upload.single())
+// app.use(upload)
 app.use(cors())
 app.use(express.json());
 app.use(
@@ -155,8 +156,14 @@ app.post("/places",  async function (req, res) {
 });
 
 // File Uploading
-app.post("/upload/:taskId", upload.single('proof'), async function (req, res) {
-  if (!req.file) {
+app.post("/upload/:taskId", function (req, res) {
+  upload(req, res, async function(err) {
+    if (err instanceof multer.MulterError) {
+      console.log(err)
+    } else if (err) {
+      console.log(err)
+    }
+      if (!req.file) {
     return res.status(400).send('No files were uploaded.');
   }
   if (!req.params.taskId){
@@ -166,7 +173,43 @@ app.post("/upload/:taskId", upload.single('proof'), async function (req, res) {
   const result = await postService.uploadFile(req.params.taskId, req.file);
 
   res.status(result.status).send(result.message)
+  })
 })
+
+// File Uploading
+// app.post("/upload/:taskId", function (req, res) {
+//   upload(req, res, async function(err) {
+//     if (err instanceof multer.MulterError) {
+//       console.log(err)
+//     } else if (err) {
+//       console.log(err)
+//     }
+//       if (!req.file) {
+//     return res.status(400).send('No files were uploaded.');
+//   }
+//   if (!req.params.taskId){
+//     return res.status(400).send('no task id provided!')
+//   }
+
+//   const blob = fs.bucket.file(req.file.originalname)
+//   const blobWriter = blob.createWriteStream({
+//       metadata: {
+//           contentType: req.file.mimetype,
+//           'proof': req.params.taskId
+//       }
+//   });
+//   blobWriter.on('error', (err) => {
+//       console.log(err)
+//       res.sendStatus(500)
+//       res.send(`File could not be uploaded for task Id: ${taskId}`)
+//   });
+//   blobWriter.on('finish', () => {
+//     res.sendStatus(200)
+//     res.send(`File uploaded for task Id: ${taskId}`)
+//   })
+//   blobWriter.end(req.file.buffer)
+//   })
+// })
 
 // Get proof of task completion
 app.get("/proof/:taskId", async function (req, res) {
