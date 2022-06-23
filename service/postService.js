@@ -7,7 +7,7 @@ exports.uploadFile = async function uploadFile(taskId, file) {
         'status': 200,
         'message': ''
     }
-    const blob = fsHelper.bucket.file(file.originalname)
+    const blob = fsHelper.bucket.file('proof/' + file.originalname)
     const blobWriter = blob.createWriteStream({
         metadata: {
             contentType: file.mimetype,
