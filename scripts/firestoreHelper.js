@@ -50,7 +50,7 @@ fs.initializeApp({
     .then(signedUrls => {
       // signedUrls[0] contains the file's public URL
       const signedURL = signedUrls[0]
-      console.log(`TASK: ${taskId} / URL: ${signedURL}`)
+      // console.log(`TASK: ${taskId} / URL: ${signedURL}`)
       return signedURL
     })
     .catch((err) => console.log(err));
