@@ -156,8 +156,8 @@ app.post("/places",  async function (req, res) {
 });
 
 // File Uploading
-app.post("/upload/:taskId", async function (req, res) {
-  upload(req, res, function(err) {
+app.post("/upload/:taskId", function (req, res) {
+  upload(req, res, async function(err) {
     if (err instanceof multer.MulterError) {
       console.log(err)
     } else if (err) {
