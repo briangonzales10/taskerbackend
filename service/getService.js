@@ -142,14 +142,10 @@ exports.submitTask = async function submitTask(data) {
 exports.getProof = function getProof(taskId) {
     let proofArray = [];
     fs.bucket.getFiles({prefix: 'proof/', delimiter: '/', autoPaginate: false})
-        .then( (file) => {
-            const jsonFile = JSON.stringify(file)
-            console.log(file[0])
-            console.log(file[1])
-            console.log(file[2])
-            if (file.metadata.proof == taskId) {
-                return file.name;
-            }
+        .then( (fileArray) => {
+            fileArray.forEach( (file) => {
+                console.log(`METADATA:` + file.getMetadata())
+            })
         })
         .catch(err => console.log(err))
 };
