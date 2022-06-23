@@ -183,7 +183,7 @@ app.post("/upload/:taskId", async function (req, res) {
 // Get proof of task completion
 app.get("/proof/:taskId", async function (req, res) {
   //const proofName = await getService.getProof(req.params.taskId)
-  res.send(200).send('proofName')
+  res.sendStatus(200).send('proofName')
 })
 
 async function searchForProof(taskId) {
