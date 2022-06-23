@@ -172,22 +172,17 @@ app.post("/upload/:taskId", async function (req, res) {
   }
 
   // Always update proof when posting a file!
-  const results = '';
-  try {
-    results = await fshelper.uploadFileHandler(taskId, req.file);
-  }
-  catch (err) {
-    console.log(err);
-    return res.sendStatus(500).send(`File could not be uploaded for task Id: ${taskId}`)
-  }
 
+  const results = await fshelper.uploadFileHandler(taskId, req.file);
+  if (results) {
   console.log(`INDEX TASK: ${taskId} / URL: ${results}`);
   postService.updateProof(taskId, results);
   res.sendStatus(200).send(`${req.file.originalname} was uploaded!`)
-
+  } else {
+    res.sendStatus(500).send(`File could not be uploaded for task Id: ${taskId}`)
+  }
   })
-})
-
+});
 
 // Get proof of task completion
 // app.get("/proof/:taskId", async function (req, res) {

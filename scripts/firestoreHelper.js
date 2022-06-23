@@ -26,11 +26,15 @@ fs.initializeApp({
 
   const uploadFileHandler = async (taskId, file) => {
     return new Promise((resolve, reject) => {
-      resolve(uploadFile(taskId, file));
+      const result = await uploadFile(taskId, file)
+      if (!result) {
+        reject();
+      }
+      resolve(result)
     })
   }
 
-  const uploadFile = async (taskId, file) => {
+  let uploadFile = async (taskId, file) => {
     console.log("starting upload")
 
     const blob = bucket.file('proof/' + file.originalname)
