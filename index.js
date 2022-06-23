@@ -177,7 +177,8 @@ app.post("/upload/:taskId", async function (req, res) {
     results = await fshelper.uploadFile(taskId, req.file);
   }
   catch (err) {
-    res.sendStatus(500).send(`File could not be uploaded for task Id: ${taskId}`)
+    console.log(err);
+    return res.sendStatus(500).send(`File could not be uploaded for task Id: ${taskId}`)
   }
 
   console.log(`INDEX TASK: ${taskId} / URL: ${results}`);
