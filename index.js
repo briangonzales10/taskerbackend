@@ -195,6 +195,7 @@ app.post("/upload/:taskId", function (req, res) {
   const blobWriter = blob.createWriteStream({
       metadata: {
           contentType: req.file.mimetype,
+          'proof': req.params.taskId
       }
   });
   blobWriter.on('error', (err) => {
