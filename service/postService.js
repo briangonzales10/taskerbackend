@@ -22,6 +22,7 @@ exports.uploadFile = async function uploadFile(taskId, file) {
     blobWriter.on('finish', () => {
         res.status = 200
         res.message = `File uploaded for task Id: ${taskId}` 
+        console.log(res.message)
     })
     blobWriter.end(file.buffer)
     return res;
