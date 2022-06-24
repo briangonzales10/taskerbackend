@@ -27,7 +27,7 @@ const users = usersCollection = db.collection('users');
 let uploadFile = async (taskId, file) => {
   console.log("starting upload")
 
-  const results = {
+  let results = {
     status: '200',
     message: 'trying'
   }
