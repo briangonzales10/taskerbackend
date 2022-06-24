@@ -26,15 +26,23 @@ const users = usersCollection = db.collection('users');
 
 let uploadFile = async (taskId, file) => {
   console.log("starting upload")
-
-  let results = {
-    status: '200',
-    message: 'trying'
-  }
-  let successFlag = false;
+  
   const fileName = file.originalname
   const blob = bucket.file('proof/' + fileName)
-  const promise = new Promise((resolve, reject) => {
+  const results = await writeToStorage(blob);
+
+  if (results.status == 200) {
+    updateProof(taskId, fileName, blob.getSignedUrl());
+  }
+  return results;
+};
+
+async function writeToStorage(blob) {
+  let results = {
+    status: '',
+    message: ''
+  }
+  return new Promise((resolve, reject) => {
     const blobWriter = blob.createWriteStream({
       metadata: {
           contentType: file.mimetype,
@@ -56,12 +64,7 @@ let uploadFile = async (taskId, file) => {
     })
     blobWriter.end(file.buffer);
   })
-
-  if (successFlag == true) {
-    updateProof(taskId, fileName, blob.getSignedUrl());
-  }
-  return promise;
-};
+}
 
 function updateProof(taskId, fileName, signedURL) {
   console.log(`Updating Proof Filename for ${taskId}`)
