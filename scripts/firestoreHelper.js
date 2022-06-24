@@ -29,7 +29,7 @@ let uploadFile = async (taskId, file) => {
 
   let results = {
     status: '',
-    message: ''
+    message: '',
   }
   let successFlag = false;
   const fileName = file.originalname
@@ -51,19 +51,27 @@ let uploadFile = async (taskId, file) => {
       successFlag = true;
       results.status = 200;
       results.message = `Finished uploading ${fileName}!`;
+
+      file.getSignedURL({
+        action: 'read',
+        expires: '03-09-2491'
+      }).then(signedURLs => {
+        updateProof(taskId, fileName, signedURLs[0]);
+      })
+      
       resolve(results);
       console.log(results.message);
     })
     blobWriter.end(file.buffer, () => {
       if (results.status == 200) {
-        updateProof(taskId, fileName, blob)
+        updateProof(taskId, fileName, file)
       }
     });
   })
   return promise;
 };
 
-function updateProof(taskId, fileName, blob) {
+function updateProof(taskId, fileName, signedURL) {
   console.log(`Updating Proof Filename for ${taskId}`)
   const signedURL = blob.getSignedURL()
   tasklist.doc(taskId).update({
