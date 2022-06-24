@@ -24,20 +24,16 @@ fs.initializeApp({
   const tasklist = tasklistCollection = db.collection("tasklist");
   const users = usersCollection = db.collection('users');
 
-  const uploadFileHandler = async (taskId, file) => {
-    return new Promise((resolve, reject) => {
-      const result = await uploadFile(taskId, file)
-      if (!result) {
-        reject();
-      }
-      resolve(result)
-    })
-  }
-
   let uploadFile = async (taskId, file) => {
     console.log("starting upload")
 
-    const blob = bucket.file('proof/' + file.originalname)
+    const results = {
+      status: '',
+      message: ''
+    }
+    const fileName = file.originalname
+
+    const blob = bucket.file('proof/' + fileName)
     const blobWriter = blob.createWriteStream({
         metadata: {
             contentType: file.mimetype,
@@ -45,30 +41,35 @@ fs.initializeApp({
         }
     });
     blobWriter.on('error', (err) => {
-        console.log(err)
+      results.status(500)
+      results.message(`Could not upload file!`)
+      console.log(err)
     });
     blobWriter.on('finish', () => {
-        console.log('Finished uploading')
+      console.log('Finished uploading')
+      results.status(200)
+      results.message(`Finished uploading ${fileName}!`)
+      updateProof(taskId, fileName)
     })
-    blobWriter.end(file.buffer)
-
-    //
-    blob.getSignedUrl({
-      action: 'read',
-      expires: '03-09-2491'
+    blobWriter.end(file.buffer, () => {
+       return results;
     })
-    .then((signedUrls) => {
-      // signedUrls[0] contains the file's public URL
-      // console.log(`TASK: ${taskId} / URL: ${signedURL}`)
-      return signedUrls[0];
-    })
-    .catch((err) => console.log(err));
 };
 
+function updateProof(taskId, fileName) {
+  console.log(`Updating Proof Filename for ${taskId}`)
+  return await fs.tasklist.doc(taskId).update({
+    proofFilename : fileName
+  })
+  .then((res) => {
+    console.log(res)
+  })
+  .catch((err) => console.log(err))
+}
 
 module.exports = {
   tasklist,
   users,
   bucket,
-  uploadFileHandler
+  uploadFile
 }

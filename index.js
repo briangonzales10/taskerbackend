@@ -165,22 +165,18 @@ app.post("/upload/:taskId", async function (req, res) {
     }
       if (!req.file) {
     return res.statusStatus(400).send('No files were uploaded.');
-  }
-  const taskId = req.params.taskId;
-  if (!taskId){
-    return res.statusStatus(400).send('no task id provided!')
-  }
+    }
+    const taskId = req.params.taskId;
+    if (!taskId){
+      return res.statusStatus(400).send('no task id provided!')
+    }
 
-  // Always update proof when posting a file!
-
-  const results = await fshelper.uploadFileHandler(taskId, req.file);
-  if (results) {
-  console.log(`INDEX TASK: ${taskId} / URL: ${results}`);
-  postService.updateProof(taskId, results);
-  res.sendStatus(200).send(`${req.file.originalname} was uploaded!`)
-  } else {
-    res.sendStatus(500).send(`File could not be uploaded for task Id: ${taskId}`)
-  }
+    // Always update proof when posting a file!
+    const results = await fshelper.uploadFile(taskId, req.file);
+    
+    console.log(`INDEX TASK: ${taskId} / URL: ${results}`);
+    postService.updateProof(taskId, results);
+    res.sendStatus(results.status).send(results.message);
   })
 });
 
@@ -189,17 +185,3 @@ app.post("/upload/:taskId", async function (req, res) {
 //   //const proofName = await getService.getProof(req.params.taskId)
 //   res.sendStatus(200).send('proofName')
 // })
-
-async function searchForProof(taskId) {
-  //returns a full file path if file already exists
-  let searchFiles = fs.readdirSync(uploadsPath)
-  searchFiles.find(filename => {
-    console.log("starting array search")
-    if (filename.includes(taskId)) {
-      return path.join(uploadsPath, filename)
-    } else {
-      console.log("proof not found")
-      return null;
-    }
-  })
-}

@@ -52,13 +52,3 @@ exports.submitTask = async function submitTask(data) {
     }
 }
 
-exports.updateProof = async function updateProof(taskId, signedURL) {
-    console.log(`Updating Proof Link for ${taskId}`)
-  return await fs.tasklist.doc(taskId).update({
-    proofLink : signedURL
-  })
-  .then((res) => {
-    console.log(res)
-  })
-  .catch((err) => console.log(err))
-}

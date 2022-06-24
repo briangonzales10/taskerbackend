@@ -99,5 +99,16 @@ exports.getProof = function getProof(taskId) {
 };
 
 function cacheProof(file) {
-
+    
+    //
+    blob.getSignedUrl({
+        action: 'read',
+        expires: '03-09-2491'
+      })
+      .then((signedUrls) => {
+        // signedUrls[0] contains the file's public URL
+        // console.log(`TASK: ${taskId} / URL: ${signedURL}`)
+        return signedUrls[0];
+      })
+      .catch((err) => console.log(err));
 }
