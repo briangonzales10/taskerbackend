@@ -2,33 +2,48 @@ require("dotenv").config();
 
 const express = require("express");
 var cors = require("cors");
-const collection = require("./scripts/firestoreHelper");
-const fileUpload = require("express-fileupload");
-const path = require('path')
-const fs = require('fs')
+const fshelper = require("./scripts/firestoreHelper");
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
+
 
 let helper = require("./scripts/helper.js");
 let googlePlace = require("./scripts/googlePlace.js");
 let getService = require("./service/getService");
+let postService = require("./service/postService")
 
 const NO_TASKS = "No Tasks Available!";
 const uploadsPath = path.join(__dirname, 'uploads', 'proof')
-
+const upload = multer({
+  storage: multer.memoryStorage(),
+  dest: 'uploads/proof'
+}).single('file')
 const PORT = process.env.PORT || 3000;
+var allowlist = ['https://sendtask.me', 'http://sendtask.me', 'http://localhost']
+var corsOptionsDelegate = function (req, callback) {
+  var corsOptions;
+  if (allowlist.indexOf(req.header('Origin')) !== -1) {
+    corsOptions = { origin: true } 
+  } else {
+    corsOptions = { origin: false } 
+  }
+  callback(null, corsOptions) 
+}
+
 const app = express();
-app.listen(PORT);
+app.listen(PORT, function() {
+  console.log(`Listening on port ${PORT}`)
+});
+
+// app.use(upload)
+app.use(cors())
 app.use(express.json());
 app.use(
   express.urlencoded({
-    extended: true,
+    extended: false,
   })
 );
-app.use(cors());
-app.use(fileUpload({
-  safeFileNames: true,
-  createParentPath: true,
-  preserveExtension: true
-}))
 
 
 // Get (get all route)
@@ -89,7 +104,7 @@ app.post("/add", async function (req, res) {
     return;
   }
   try {
-    await getService.submitTask(data)
+    await postService.submitTask(data)
 
     res.status(200).send(`Thank You! Your task: "${data.taskname}" has been added!`);
   } catch (error) {
@@ -103,19 +118,19 @@ app.delete("/delete/:taskId", async function (req, res) {
   const taskIdToDelete = req.params.taskId;
 
   console.log("DELETING TASK: " + taskIdToDelete);
-  await collection.tasklist.doc(taskIdToDelete).delete();
+  await fshelper.tasklist.doc(taskIdToDelete).delete();
   res.status(200).send("Task Deleted");
 });
 
 // Update Path /update to change status to complete
 app.put("/update/:taskId", async function (req, res) {
   const taskIdToUpdate = req.params.taskId;
-  const snapshot = await collection.tasklist.doc(taskIdToUpdate).get();
+  const snapshot = await fshelper.tasklist.doc(taskIdToUpdate).get();
   let reqStatusChange = req.body.status;
 
   let updateStatus = helper.findStatus(reqStatusChange);
   if (updateStatus !== "NONE") {
-    await collection.tasklist
+    await fshelper.tasklist
       .doc(taskIdToUpdate)
       .update({ status: updateStatus });
 
@@ -127,7 +142,7 @@ app.put("/update/:taskId", async function (req, res) {
   }
 });
 
-app.post("/places", async function (req, res) {
+app.post("/places",  async function (req, res) {
   const data = req.body;
   console.log(req);
   console.log(`Searching for: ${data.address}`);
@@ -141,60 +156,25 @@ app.post("/places", async function (req, res) {
 });
 
 // File Uploading
-app.post("/upload/:taskId", function (req, res) {
-  if (!req.files || Object.keys(req.files).length === 0) {
+app.post("/upload/:taskId", async function (req, res) {
+  upload(req, res, async function(err) {
+    if (err instanceof multer.MulterError) {
+      console.log(err)
+    } else if (err) {
+      console.log(err)
+    }
+      if (!req.file) {
     return res.status(400).send('No files were uploaded.');
-  }
-  if (!req.params.taskId){
-    return res.status(400).send('no task id provided!')
-  }
-
-  let fileProof = req.files.proof
-  let fileProofName = fileProof.name
-  let fileExtension = fileProofName.split('.').pop()
-  let fileChangedName = `${req.params.taskId}.${fileExtension}`
-  console.log(`
-  fileProof: ${fileProof}
-  fileProofName: ${fileProofName}
-  fileExtension: ${fileExtension}
-  fileChangedName: ${fileChangedName}
-  `)
-
-  fileProof.mv(path.join(uploadsPath, fileChangedName), function(err) {
-    if (err)
-    return res.status(500).send(err)
-  })
-  console.log(`File Uploaded for task ${req.params.taskId}: ${fileProof.name}`)
-
-  res.status(200).send("File uploaded successfully")
-})
-
-// Get proof of task completion
-app.get("/proof/:taskId",async function (req, res) {
-  console.log('Searching for proof')
-  let taskId = req.params.taskId
-  if (!taskId) {
-    console.log('Searching for proof with no task Id')
-    return res.status(400).send({'status': 'fail', 'message': 'no task Id Provided'})
-  }
-
-  let searchFiles = fs.readdirSync(uploadsPath)
-  console.log(searchFiles)
-
-  searchFiles.find(filename => {
-    if (filename.includes(taskId)) {
-      console.log('starting array search')
-      fullFilePath = path.join(uploadsPath, filename)
-      console.log(`FilePath Requested: ${fullFilePath}`)
-      res.status(200).sendFile(fullFilePath, (err) => {
-        if (err) {
-          console.log(err)
-        }
-      })
     }
-    else {
-      console.log('no proof found')
-      res.status(400).send({'status': 'fail', 'message': 'an error occured finding file'})
+    const taskId = req.params.taskId;
+    if (!taskId){
+      return res.status(400).send('no task id provided!')
     }
+
+    // Always update proof when posting a file!
+    const results = await fshelper.uploadFile(taskId, req.file);
+    
+    console.log(`INDEX TASK: ${taskId} / Message: ${results.message}`);
+    res.status(results.status).send(results.message);
   })
-})
+});

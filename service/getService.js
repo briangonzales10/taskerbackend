@@ -87,53 +87,28 @@ exports.getSingleTask = async function getSingleTask(taskId) {
     return task;
 }
 
-exports.submitTask = async function submitTask(data) {
-    let booleanIsPublic = helper.getBoolean(data.isPublic);
-
-    let time = Timestamp.now();
-
-    let taskObject = {
-            timestamp: time, //backend derived
-            taskname: data.taskname, //front end
-            location: {
-            //frontend
-            latitude: data.location.latitude,
-            longitude: data.location.longitude,
-            address: data.location.address,
-            },
-            status: `OPEN`, //backend for new tasks of course
-            picUrl:
-            "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2080&q=80", //data.picUrl, //needs to be backend from pic URL service
-            remarks: data.remarks, //frontend
-            isPublic: booleanIsPublic, //frontend
-            isComplete: false,
-            submittedBy: data.uid, //front end uuid of user & required update user Tasks
-        };
-    console.log(taskObject);
-    try {
-        let myTaskId;
-        let taskIdNew = await fs.tasklist
-        .add(taskObject)
-        .then((results) => {
-            console.log(results);
-            myTaskId = results.id;
+exports.getProof = function getProof(taskId) {
+    let proofArray = [];
+    fs.bucket.getFiles({prefix: 'proof/', delimiter: '/', autoPaginate: false})
+        .then( (fileArray) => {
+            fileArray.forEach( (file) => {
+                console.log(`METADATA:` + file)
+            })
         })
-        .catch((err) => {
-            console.log(err);
-        });
+        .catch(err => console.log(err))
+};
 
-        fs.users
-        .doc(data.uid)
-        .update({
-            submittedTasks: FieldValue.arrayUnion(myTaskId)
-        })
-        .then((res) => {
-            console.log(res);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-    } catch (err) {
-        console.log(err)
-    }
+function cacheProof(file) {
+    
+    //
+    blob.getSignedUrl({
+        action: 'read',
+        expires: '03-09-2491'
+      })
+      .then((signedUrls) => {
+        // signedUrls[0] contains the file's public URL
+        // console.log(`TASK: ${taskId} / URL: ${signedURL}`)
+        return signedUrls[0];
+      })
+      .catch((err) => console.log(err));
 }
