@@ -1,11 +1,7 @@
 const serviceAccount = require("../google-credentials.json");
 const fs = require("firebase-admin");
 
-const {
-    initializeApp,
-    applicationDefault,
-    cert,
-  } = require("firebase-admin/app");
+const { initializeApp, applicationDefault, cert} = require("firebase-admin/app")
   const {
     getFirestore,
     Timestamp,
@@ -13,6 +9,7 @@ const {
   } = require("firebase-admin/firestore");
 
   //Open DB connection
+
 fs.initializeApp({
   credential: fs.credential.cert(serviceAccount),
   storageBucket: `${process.env.PROJECT_ID}.appspot.com`,
@@ -28,39 +25,49 @@ let uploadFile = async (taskId, file) => {
   console.log("starting upload")
 
   let results = {
-    status: '200',
-    message: 'trying'
+    status: '',
+    message: '',
   }
   let successFlag = false;
   const fileName = file.originalname
-  const blob = bucket.file('proof/' + fileName)
-  const blobWriter = blob.createWriteStream({
+  const blob = bucket.file('proof/' + fileName);
+  const promise = new Promise((resolve, reject) => {
+    const blobWriter = blob.createWriteStream({
       metadata: {
           contentType: file.mimetype,
           metadata: { 'proof': taskId }
       }
-  });
-  blobWriter.on('error', (err) => {
-    results.status = 500
-    results.message = `Could not upload file!`
-    console.log(err)
-  });
-  blobWriter.on('finish', () => {
-    successFlag = true;
-    results.status = 200;
-    results.message = `Finished uploading ${fileName}!`;
-    console.log(results.message)
+    });
+    blobWriter.on('error', (err) => {
+      results.status = 500;
+      results.message = `Could not upload file!`;
+      reject(results);
+      console.log(err)
+    });
+    blobWriter.on('finish', () => {
+      successFlag = true;
+      results.status = 200;
+      results.message = `Finished uploading ${fileName}!`;
+      
+      resolve(results);
+      console.log(results.message);
+    })
+    blobWriter.end(file.buffer, () => {
+      if (results.status == 200) {
+      blob.getSignedUrl({
+          action: 'read',
+          expires: '03-09-2491'
+        }).then(signedURLs => {
+        updateProof(taskId, fileName, signedURLs[0]);
+      })
+      }
+    });
   })
-  blobWriter.end(file.buffer);
-  if (successFlag == true) {
-    updateProof(taskId, fileName, blob.getSignedUrl());
-  }
-  return results
+  return promise;
 };
 
 function updateProof(taskId, fileName, signedURL) {
   console.log(`Updating Proof Filename for ${taskId}`)
-  console.log(`URL: ${signedURL}`)
   tasklist.doc(taskId).update({
     proof : {
       filename: fileName,
