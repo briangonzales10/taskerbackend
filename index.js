@@ -164,18 +164,18 @@ app.post("/upload/:taskId", async function (req, res) {
       console.log(err)
     }
       if (!req.file) {
-    return res.statusStatus(400).send('No files were uploaded.');
+    return res.status(400).send('No files were uploaded.');
     }
     const taskId = req.params.taskId;
     if (!taskId){
-      return res.statusStatus(400).send('no task id provided!')
+      return res.status(400).send('no task id provided!')
     }
 
     // Always update proof when posting a file!
     const results = await fshelper.uploadFile(taskId, req.file);
     
     console.log(`INDEX TASK: ${taskId} / Message: ${results.message}`);
-    res.sendStatus(results.status).send(results.message);
+    res.status(results.status).send(results.message);
   })
 });
 
