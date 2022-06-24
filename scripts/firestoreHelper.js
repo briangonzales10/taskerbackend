@@ -34,6 +34,7 @@ let uploadFile = async (taskId, file) => {
   const fileName = file.originalname
 
   const blob = bucket.file('proof/' + fileName)
+  const signedURL = blob.getSignedUrl();
   const blobWriter = blob.createWriteStream({
       metadata: {
           contentType: file.mimetype,
@@ -49,17 +50,20 @@ let uploadFile = async (taskId, file) => {
     console.log('Finished uploading')
     results.status = 200
     results.message = `Finished uploading ${fileName}!`
-    updateProof(taskId, fileName)
+    updateProof(taskId, fileName, signedURL)
   })
   blobWriter.end(file.buffer)
   return results
 };
 
-function updateProof(taskId, fileName) {
+function updateProof(taskId, fileName, signedURL) {
   console.log(`Updating Proof Filename for ${taskId}`)
   
   tasklist.doc(taskId).update({
-    proofFilename : fileName
+    proof : {
+      filename: fileName,
+      proofURL: signedURL
+    }
   })
   .then((res) => {
     console.log(res)
