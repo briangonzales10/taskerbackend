@@ -41,19 +41,18 @@ let uploadFile = async (taskId, file) => {
       }
   });
   blobWriter.on('error', (err) => {
-    results.status(500)
-    results.message(`Could not upload file!`)
+    results.status = 500
+    results.message = `Could not upload file!`
     console.log(err)
   });
   blobWriter.on('finish', () => {
     console.log('Finished uploading')
-    results.status(200)
-    results.message(`Finished uploading ${fileName}!`)
+    results.status = 200
+    results.message = `Finished uploading ${fileName}!`
     updateProof(taskId, fileName)
   })
-  blobWriter.end(file.buffer, () => {
-      return results;
-  })
+  blobWriter.end(file.buffer)
+  return results
 };
 
 function updateProof(taskId, fileName) {
