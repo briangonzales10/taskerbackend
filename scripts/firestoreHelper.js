@@ -28,8 +28,8 @@ let uploadFile = async (taskId, file) => {
   console.log("starting upload")
 
   const results = {
-    status: '',
-    message: ''
+    status: '200',
+    message: 'trying'
   }
   const fileName = file.originalname
 
@@ -57,7 +57,8 @@ let uploadFile = async (taskId, file) => {
 
 function updateProof(taskId, fileName) {
   console.log(`Updating Proof Filename for ${taskId}`)
-  return fs.tasklist.doc(taskId).update({
+  
+  fs.tasklist.doc(taskId).update({
     proofFilename : fileName
   })
   .then((res) => {
