@@ -72,7 +72,6 @@ let uploadFile = async (taskId, file) => {
 
 function updateProof(taskId, fileName, signedURL) {
   console.log(`Updating Proof Filename for ${taskId}`)
-  const signedURL = blob.getSignedURL()
   tasklist.doc(taskId).update({
     proof : {
       filename: fileName,
