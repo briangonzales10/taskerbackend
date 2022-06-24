@@ -46,23 +46,26 @@ let uploadFile = async (taskId, file) => {
       results.message = `Could not upload file!`;
       reject(results);
       console.log(err)
-   });
+    });
     blobWriter.on('finish', () => {
       successFlag = true;
       results.status = 200;
       results.message = `Finished uploading ${fileName}!`;
-
-      file.getSignedURL({
-        action: 'read',
-        expires: '03-09-2491'
-      }).then(signedURLs => {
-        updateProof(taskId, fileName, signedURLs[0]);
-      })
       
       resolve(results);
       console.log(results.message);
     })
-    blobWriter.end(file.buffer);
+    blobWriter.end(file.buffer, () => {
+      if (results.status == 200) {
+        
+      file.getSignedURL({
+          action: 'read',
+          expires: '03-09-2491'
+        }).then(signedURLs => {
+        updateProof(taskId, fileName, signedURLs[0]);
+      })
+      }
+    });
   })
   return promise;
 };
