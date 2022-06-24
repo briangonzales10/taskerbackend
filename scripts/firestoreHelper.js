@@ -29,7 +29,7 @@ let uploadFile = async (taskId, file) => {
   
   const fileName = file.originalname
   const blob = bucket.file('proof/' + fileName)
-  const results = await writeToStorage(blob);
+  const results = await writeToStorage(blob, file);
 
   if (results.status == 200) {
     updateProof(taskId, fileName, blob.getSignedUrl());
@@ -37,7 +37,7 @@ let uploadFile = async (taskId, file) => {
   return results;
 };
 
-async function writeToStorage(blob) {
+async function writeToStorage(blob, file) {
   let results = {
     status: '',
     message: ''
@@ -58,7 +58,7 @@ async function writeToStorage(blob) {
     blobWriter.on('finish', () => {
       successFlag = true;
       results.status = 200;
-      results.message = `Finished uploading ${fileName}!`;
+      results.message = `Finished uploading ${file.originalname}!`;
       resolve(results);
       console.log(results.message);
     })
