@@ -34,24 +34,29 @@ let uploadFile = async (taskId, file) => {
   let successFlag = false;
   const fileName = file.originalname
   const blob = bucket.file('proof/' + fileName)
-  const blobWriter = blob.createWriteStream({
+  const promise = new Promise((resolve, reject) => {
+    const blobWriter = blob.createWriteStream({
       metadata: {
           contentType: file.mimetype,
           metadata: { 'proof': taskId }
       }
-  });
-  blobWriter.on('error', (err) => {
-    results.status = 500
-    results.message = `Could not upload file!`
-    console.log(err)
-  });
-  blobWriter.on('finish', () => {
-    successFlag = true;
-    results.status = 200;
-    results.message = `Finished uploading ${fileName}!`;
-    console.log(results.message)
+    });
+    blobWriter.on('error', (err) => {
+      results.status = 500;
+      results.message = `Could not upload file!`;
+      reject(results);
+      console.log(err)
+   });
+    blobWriter.on('finish', () => {
+      successFlag = true;
+      results.status = 200;
+      results.message = `Finished uploading ${fileName}!`;
+      resolve(results);
+      console.log(results.message);
+    })
+    blobWriter.end(file.buffer);
   })
-  blobWriter.end(file.buffer);
+
   if (successFlag == true) {
     updateProof(taskId, fileName, blob.getSignedUrl());
   }
