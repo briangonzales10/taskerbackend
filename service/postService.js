@@ -1,5 +1,5 @@
 const fs = require('../scripts/firestoreHelper')
-const helper = require('../scripts/status')
+const helper = require('../scripts/helper')
 
 exports.submitTask = async function submitTask(data) {
     let booleanIsPublic = helper.getBoolean(data.isPublic);
