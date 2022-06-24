@@ -31,7 +31,7 @@ let uploadFile = async (taskId, file) => {
     status: '200',
     message: 'trying'
   }
-  const successFlag = false;
+  let successFlag = false;
   const fileName = file.originalname
   const blob = bucket.file('proof/' + fileName)
   const blobWriter = blob.createWriteStream({
@@ -46,10 +46,10 @@ let uploadFile = async (taskId, file) => {
     console.log(err)
   });
   blobWriter.on('finish', () => {
-    console.log('Finished uploading');
     successFlag = true;
     results.status = 200;
     results.message = `Finished uploading ${fileName}!`;
+    console.log(results.message)
   })
   blobWriter.end(file.buffer);
   if (successFlag == true) {
