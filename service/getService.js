@@ -1,9 +1,4 @@
 const fs = require('../scripts/firestoreHelper')
-const helper = require('../scripts/helper')
-const {
-    Timestamp,
-    FieldValue,
-  } = require("firebase-admin/firestore");
 
 //Collection Field names
 const IS_COMPLETE = 'isComplete';
@@ -85,30 +80,4 @@ exports.getSingleTask = async function getSingleTask(taskId) {
 
     }
     return task;
-}
-
-exports.getProof = function getProof(taskId) {
-    let proofArray = [];
-    fs.bucket.getFiles({prefix: 'proof/', delimiter: '/', autoPaginate: false})
-        .then( (fileArray) => {
-            fileArray.forEach( (file) => {
-                console.log(`METADATA:` + file)
-            })
-        })
-        .catch(err => console.log(err))
-};
-
-function cacheProof(file) {
-    
-    //
-    blob.getSignedUrl({
-        action: 'read',
-        expires: '03-09-2491'
-      })
-      .then((signedUrls) => {
-        // signedUrls[0] contains the file's public URL
-        // console.log(`TASK: ${taskId} / URL: ${signedURL}`)
-        return signedUrls[0];
-      })
-      .catch((err) => console.log(err));
 }
