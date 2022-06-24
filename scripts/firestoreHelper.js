@@ -1,16 +1,8 @@
 const serviceAccount = require("../google-credentials.json");
 const fs = require("firebase-admin");
 
-const {
-    initializeApp,
-    applicationDefault,
-    cert,
-  } = require("firebase-admin/app");
-  const {
-    getFirestore,
-    Timestamp,
-    FieldValue,
-  } = require("firebase-admin/firestore");
+const { initializeApp, applicationDefault, cert } = require("firebase-admin/app")
+const { getFirestore, Timestamp, FieldValue } = require("firebase-admin/firestore");
 
   //Open DB connection
 fs.initializeApp({
@@ -82,5 +74,7 @@ module.exports = {
   tasklist,
   users,
   bucket,
-  uploadFile
+  uploadFile,
+  Timestamp,
+  FieldValue
 }

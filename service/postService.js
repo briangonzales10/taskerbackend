@@ -4,7 +4,7 @@ const helper = require('../scripts/status')
 exports.submitTask = async function submitTask(data) {
     let booleanIsPublic = helper.getBoolean(data.isPublic);
 
-    let time = Timestamp.now();
+    let time = fs.Timestamp.now();
 
     let taskObject = {
             timestamp: time, //backend derived
@@ -39,7 +39,7 @@ exports.submitTask = async function submitTask(data) {
         fs.users
         .doc(data.uid)
         .update({
-            submittedTasks: FieldValue.arrayUnion(myTaskId)
+            submittedTasks: fs.FieldValue.arrayUnion(myTaskId)
         })
         .then((res) => {
             console.log(res);
