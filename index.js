@@ -104,7 +104,7 @@ app.post("/add", async function (req, res) {
     return;
   }
   try {
-    await getService.submitTask(data)
+    await postService.submitTask(data)
 
     res.status(200).send(`Thank You! Your task: "${data.taskname}" has been added!`);
   } catch (error) {
@@ -156,7 +156,7 @@ app.post("/places",  async function (req, res) {
 });
 
 // File Uploading
-app.post("/upload/:taskId", function (req, res) {
+app.post("/upload/:taskId", async function (req, res) {
   upload(req, res, async function(err) {
     if (err instanceof multer.MulterError) {
       console.log(err)
@@ -165,34 +165,22 @@ app.post("/upload/:taskId", function (req, res) {
     }
       if (!req.file) {
     return res.status(400).send('No files were uploaded.');
-  }
-  if (!req.params.taskId){
-    return res.status(400).send('no task id provided!')
-  }
+    }
+    const taskId = req.params.taskId;
+    if (!taskId){
+      return res.status(400).send('no task id provided!')
+    }
 
-  const result = await postService.uploadFile(req.params.taskId, req.file);
-
-  res.status(result.status).send(result.message)
+    // Always update proof when posting a file!
+    const results = await fshelper.uploadFile(taskId, req.file);
+    
+    console.log(`INDEX TASK: ${taskId} / Message: ${results.message}`);
+    res.status(results.status).send(results.message);
   })
-})
-
+});
 
 // Get proof of task completion
-app.get("/proof/:taskId", async function (req, res) {
-  postService.getProof(req.params.taskId)
-  res.send(200)
-})
-
-async function searchForProof(taskId) {
-  //returns a full file path if file already exists
-  let searchFiles = fs.readdirSync(uploadsPath)
-  searchFiles.find(filename => {
-    console.log("starting array search")
-    if (filename.includes(taskId)) {
-      return path.join(uploadsPath, filename)
-    } else {
-      console.log("proof not found")
-      return null;
-    }
-  })
-}
+// app.get("/proof/:taskId", async function (req, res) {
+//   //const proofName = await getService.getProof(req.params.taskId)
+//   res.sendStatus(200).send('proofName')
+// })
