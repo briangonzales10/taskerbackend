@@ -60,7 +60,7 @@ let uploadFile = async (taskId, file) => {
   if (successFlag == true) {
     updateProof(taskId, fileName, blob.getSignedUrl());
   }
-  return results
+  return promise;
 };
 
 function updateProof(taskId, fileName, signedURL) {
