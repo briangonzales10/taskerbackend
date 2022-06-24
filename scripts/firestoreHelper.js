@@ -1,11 +1,7 @@
 const serviceAccount = require("../google-credentials.json");
 const fs = require("firebase-admin");
 
-const {
-    initializeApp,
-    applicationDefault,
-    cert,
-  } = require("firebase-admin/app");
+const { initializeApp, applicationDefault, cert} = require("firebase-admin/app")
   const {
     getFirestore,
     Timestamp,
@@ -13,6 +9,7 @@ const {
   } = require("firebase-admin/firestore");
 
   //Open DB connection
+
 fs.initializeApp({
   credential: fs.credential.cert(serviceAccount),
   storageBucket: `${process.env.PROJECT_ID}.appspot.com`,
@@ -33,7 +30,7 @@ let uploadFile = async (taskId, file) => {
   }
   let successFlag = false;
   const fileName = file.originalname
-  const blob = bucket.file('proof/' + fileName)
+  const blob = bucket.file('proof/' + fileName);
   const promise = new Promise((resolve, reject) => {
     const blobWriter = blob.createWriteStream({
       metadata: {
@@ -57,8 +54,7 @@ let uploadFile = async (taskId, file) => {
     })
     blobWriter.end(file.buffer, () => {
       if (results.status == 200) {
-        
-      file.getSignedURL({
+      blob.getSignedUrl({
           action: 'read',
           expires: '03-09-2491'
         }).then(signedURLs => {
