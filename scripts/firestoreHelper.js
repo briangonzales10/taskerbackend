@@ -62,11 +62,7 @@ let uploadFile = async (taskId, file) => {
       resolve(results);
       console.log(results.message);
     })
-    blobWriter.end(file.buffer, () => {
-      if (results.status == 200) {
-        updateProof(taskId, fileName, file)
-      }
-    });
+    blobWriter.end(file.buffer);
   })
   return promise;
 };
