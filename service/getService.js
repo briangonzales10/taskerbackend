@@ -13,7 +13,7 @@ const TIMESTAMP_LABEL = 'timestamp';
 
 exports.getTasks = async function getTasks(adminId, sortOrder) {
     let sortOrderFixed = sortOrder?.toLowerCase() || '';
-    if (sortOrderFixed != 'desc' || sortOrderFixed != 'asc') {
+    if (sortOrderFixed != 'desc' && sortOrderFixed != 'asc') {
       sortOrderFixed = 'desc';
     }
     console.log('getting getTasks() with sort ' + sortOrderFixed)
@@ -57,7 +57,7 @@ async function getPublicTasks(sortOrder) {
 
 exports.getUserTasks = async function getUserTasks(userId, sortOrder) {
     let sortOrderFixed = sortOrder?.toLowerCase() || '';
-    if (sortOrderFixed != 'desc' || sortOrderFixed != 'asc') {
+    if (sortOrderFixed != 'desc' && sortOrderFixed != 'asc') {
       sortOrderFixed = 'desc';
     }
     let tasks = []
