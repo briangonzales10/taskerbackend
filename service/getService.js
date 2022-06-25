@@ -11,20 +11,24 @@ const SUBMITTED_BY = 'submittedBy';
 const TASK_NAME_LABEL = 'taskname';
 const TIMESTAMP_LABEL = 'timestamp';
 
-exports.getTasks = async function getTasks(adminId) {
+exports.getTasks = async function getTasks(adminId, sortOrder) {
+    let sortOrderFixed = sortOrder.toLowerCase();
+    if (sortOrderFixed != 'desc' || sortOrderFixed != 'asc') {
+      sortOrderFixed = 'desc';
+    }
     console.log('getting getTasks()')
     if (adminId == process.env.ADMIN_UID) {  //only ADMIN allowed to view all public & private tasks
-       return await getAllTasks();
+       return await getAllTasks(sortOrderFixed);
     } else {
-       return await getPublicTasks();
+       return await getPublicTasks(sortOrderFixed);
     }
 }
 
 //get public & private tasks
-async function getAllTasks() {  
+async function getAllTasks(sortOrder) { 
     try {
         let tasks = []
-        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL, 'desc').get();
+        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL, sortOrder).get();
         snapshot.forEach (doc => {
             // console.log(doc.id, '=>', doc.data())
             tasks.push({ taskid: doc.id, data: doc.data() });              
@@ -35,10 +39,10 @@ async function getAllTasks() {
     }
 }
 
-async function getPublicTasks() {
+async function getPublicTasks(sortOrder) {
     try {
         let tasks = []
-        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL, 'desc').get();
+        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL, sortOrder).get();
         snapshot.forEach (doc => {
             // console.log(doc.id, '=>', doc.data())
             if (doc.data().isPublic === true) {
@@ -51,11 +55,14 @@ async function getPublicTasks() {
     }
 }
 
-exports.getUserTasks = async function getUserTasks(userId) {
-
+exports.getUserTasks = async function getUserTasks(userId, sortOrder) {
+    let sortOrderFixed = sortOrder.toLowerCase();
+    if (sortOrderFixed != 'desc' || sortOrderFixed != 'asc') {
+      sortOrderFixed = 'desc';
+    }
     let tasks = []
     try {
-        const snapshot = await fs.tasklist.where(SUBMITTED_BY, '==', userId).orderBy(TIMESTAMP_LABEL, 'desc').get();
+        const snapshot = await fs.tasklist.where(SUBMITTED_BY, '==', userId).orderBy(TIMESTAMP_LABEL, sortOrderFixed).get();
         snapshot.forEach (doc => {
             console.log(doc.id, '=>', doc.data())
             tasks.push({ taskid: doc.id, data: doc.data() }); 
