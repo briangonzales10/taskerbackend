@@ -24,7 +24,7 @@ exports.getTasks = async function getTasks(adminId) {
 async function getAllTasks() {  
     try {
         let tasks = []
-        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL).get();
+        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL, 'desc').get();
         snapshot.forEach (doc => {
             // console.log(doc.id, '=>', doc.data())
             tasks.push({ taskid: doc.id, data: doc.data() });              
@@ -38,7 +38,7 @@ async function getAllTasks() {
 async function getPublicTasks() {
     try {
         let tasks = []
-        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL).get();
+        const snapshot = await fs.tasklist.orderBy(TIMESTAMP_LABEL, 'desc').get();
         snapshot.forEach (doc => {
             // console.log(doc.id, '=>', doc.data())
             if (doc.data().isPublic === true) {
@@ -55,7 +55,7 @@ exports.getUserTasks = async function getUserTasks(userId) {
 
     let tasks = []
     try {
-        const snapshot = await fs.tasklist.where(SUBMITTED_BY, '==', userId).get();
+        const snapshot = await fs.tasklist.where(SUBMITTED_BY, '==', userId).orderBy(TIMESTAMP_LABEL, 'desc').get();
         snapshot.forEach (doc => {
             console.log(doc.id, '=>', doc.data())
             tasks.push({ taskid: doc.id, data: doc.data() }); 
