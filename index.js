@@ -47,10 +47,10 @@ app.use(
 
 
 // Get (get all route)
-app.get("/tasks/:id", async function (req, res) {
+app.get("/tasks/:id/:sortOrder?", async function (req, res) {
 
   try {
-    let tasks = await getService.getTasks(req.params.id);
+    let tasks = await getService.getTasks(req.params.id, req.params.sortOrder);
     res.status(200).send(tasks);
     console.log("# of All Tasks:" + tasks.length);
   } catch (err) {
@@ -60,10 +60,10 @@ app.get("/tasks/:id", async function (req, res) {
 });
 
 // Get all tasks for 1 user
-app.get("/mytasks/:id", async function (req, res) {
+app.get("/mytasks/:id/:sortOrder?", async function (req, res) {
 
   try {
-    let tasks = await getService.getUserTasks(req.params.id);
+    let tasks = await getService.getUserTasks(req.params.id, req.params.sortOrder);
     res.status(200).send(tasks);
     console.log("# of User Tasks:" + tasks.length);
   } catch (err) {
