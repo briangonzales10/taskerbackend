@@ -12,11 +12,11 @@ const TASK_NAME_LABEL = 'taskname';
 const TIMESTAMP_LABEL = 'timestamp';
 
 exports.getTasks = async function getTasks(adminId, sortOrder) {
-    let sortOrderFixed = sortOrder.toLowerCase();
+    let sortOrderFixed = sortOrder?.toLowerCase() || '';
     if (sortOrderFixed != 'desc' || sortOrderFixed != 'asc') {
       sortOrderFixed = 'desc';
     }
-    console.log('getting getTasks()')
+    console.log('getting getTasks() with sort ' + sortOrderFixed)
     if (adminId == process.env.ADMIN_UID) {  //only ADMIN allowed to view all public & private tasks
        return await getAllTasks(sortOrderFixed);
     } else {
@@ -56,7 +56,7 @@ async function getPublicTasks(sortOrder) {
 }
 
 exports.getUserTasks = async function getUserTasks(userId, sortOrder) {
-    let sortOrderFixed = sortOrder.toLowerCase();
+    let sortOrderFixed = sortOrder?.toLowerCase() || '';
     if (sortOrderFixed != 'desc' || sortOrderFixed != 'asc') {
       sortOrderFixed = 'desc';
     }
