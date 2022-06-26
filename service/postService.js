@@ -20,7 +20,8 @@ exports.submitTask = async function submitTask(data) {
             "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2080&q=80", //data.picUrl, //needs to be backend from pic URL service
             remarks: data.remarks, //frontend
             isPublic: booleanIsPublic, //frontend
-            isComplete: false,
+            category: data.category,
+            completedTime: '', // Blank until completed
             submittedBy: data.uid, //front end uuid of user & required update user Tasks
         };
     console.log(taskObject);

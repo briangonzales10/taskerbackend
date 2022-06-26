@@ -96,6 +96,7 @@ app.post("/add", async function (req, res) {
     !data.uid ||
     !data.taskname ||
     !data.location ||
+    !data.category ||
     data.isPublic == null
   ) {
     res.status(400).send("data not valid");
@@ -125,12 +126,20 @@ app.put("/update/:taskId", async function (req, res) {
   const taskIdToUpdate = req.params.taskId;
   const snapshot = await fshelper.tasklist.doc(taskIdToUpdate).get();
   let reqStatusChange = req.body.status;
-
   let updateStatus = helper.findStatus(reqStatusChange);
+
+  let updateData = {
+    status: updateStatus
+  }
+
+  if (updateStatus == 'COMPLETE') {
+    updateData.completedTime = fshelper.Timestamp.now();
+  }
+
   if (updateStatus !== "NONE") {
     await fshelper.tasklist
       .doc(taskIdToUpdate)
-      .update({ status: updateStatus });
+      .update(updateData);
 
     res
       .status(200)
