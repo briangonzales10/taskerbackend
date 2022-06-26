@@ -133,7 +133,7 @@ app.put("/update/:taskId", async function (req, res) {
   }
 
   if (updateStatus == 'COMPLETE') {
-    updateData.completeTime = fshelper.Timestamp.now();
+    updateData.completedTime = fshelper.Timestamp.now();
   }
 
   if (updateStatus !== "NONE") {
