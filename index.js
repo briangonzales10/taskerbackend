@@ -182,6 +182,7 @@ app.post("/email", function (req, res) {
   let email = req.body;
   let mailToSend = emailHelper.generateMail(email.userTo, email.subject, email.message);
   emailHelper.sendMail(mailToSend);
+  res.status(200).send('email sent?')
 });
 
 function validatePost(data) {
