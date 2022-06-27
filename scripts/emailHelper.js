@@ -28,7 +28,7 @@ transport.verify(function(error, success) {
     };
  }
 
- exports.sendMail = transport.sendMail(generateMail('strategos@gmail.com', 'testing email', 'this is only a test'), (error, info) => {
+ exports.sendMail = transport.sendMail(emailOptions, (error, info) => {
     if (error) {
         return console.log(error);
     }
