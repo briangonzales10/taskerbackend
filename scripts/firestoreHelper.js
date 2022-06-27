@@ -87,18 +87,19 @@ async function findUserFromTaskId(taskId) {
       submitUserId = res.data().submittedBy;
       taskName = res.data().taskName;
     })
-    // let submitedUserId = task.data().submittedBy;
-    let submitUser = users.doc(submitUserId).get();
-    submitUser.then((res) => {
-      console.log(res.data());
-      if (res.data() != null) {
-        let userData = {
-          displayName: res.data().displayName,
-          emailAddress: res.data().emailAddress,
-          taskName: taskName
-        }
+    .then( () => {
+      let submitUser = users.doc(submitUserId).get();
+      submitUser.then((res) => {
+        console.log(`submitUser Res data: ${res.data()}`);
+        if (res.data() != null) {
+          let userData = {
+            displayName: res.data().displayName,
+            emailAddress: res.data().emailAddress,
+            taskName: taskName
+          }
         resolve(userData);
-     }
+        }
+      })
     })
     reject()
   })
