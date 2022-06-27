@@ -18,19 +18,19 @@ transport.verify(function(error, success) {
     }
  });
 
- exports.generateMail = function generateMail(toUser, UserSubject, UserText) {
-    return {
+exports.generateMail = function generateMail(toUser, UserSubject, UserText) {
+    let mailOptions = {
         from: '"Task Me Team" <brian@sendtask.me>',
         to: toUser,
         subject: UserSubject,
         text: UserText,
         html: '<b>Hey there! </b><br> This is our first message sent with Nodemailer'
     };
- }
 
- exports.sendMail = transport.sendMail(emailOptions, (error, info) => {
-    if (error) {
-        return console.log(error);
-    }
-    console.log(`Message sent: ${info.messageId}`)
- });
+transport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log(`Message sent: ${info.messageId}`)
+ })
+}
