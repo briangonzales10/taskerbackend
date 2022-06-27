@@ -96,7 +96,7 @@ async function findUserFromTaskId(taskId) {
         if (userDataRes != null) {
           let userData = {
             displayName: userDataRes.displayName,
-            emailAddress: userDataRes.emailAddress,
+            emailAddress: userDataRes.email,
             taskName: taskName
           }
           console.log(`submitUser Res data: ${userData.displayName}, ${userData.emailAddress}`);
