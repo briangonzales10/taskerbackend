@@ -100,8 +100,14 @@ async function findUserFromTaskId(taskId) {
         resolve(userData);
         }
       })
+      .catch( (err) => {
+        console.log('Get Submit User error: ' + err)
+      })
     })
-    reject()
+    .catch( (err) => {
+      console.log('Get task error: ' + err);
+      reject()
+    })
   })
 }
 
