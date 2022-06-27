@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const fsHelper = require('./firestoreHelper')
 
 
 let transport = nodemailer.createTransport({
@@ -18,13 +19,15 @@ transport.verify(function(error, success) {
     }
  });
 
-exports.generateMail = function generateMail(toUser, UserSubject, UserText) {
+exports.generateMail = function generateMail(taskId) {
+    let user = await fsHelper.findUserFromTaskId(taskId);
+    
     let mailOptions = {
         from: '"Task Me Team" <brian@sendtask.me>',
-        to: toUser,
-        subject: UserSubject,
-        text: UserText,
-        html: '<b>Hey there! </b><br> This is our first message sent with Nodemailer'
+        to: `${user.displayName} <${user.emailAddress}>`,
+        subject: `Your task '${user.taskname}' was completed!`,
+        text: `Hello! Your task '${user.taskname} was completed by Brian! You can view proof of completion here: https://www.sendtask.me/showtask/${taskId}'`,
+        html: `Hello! Your task '${user.taskname} was completed by Brian! You can view proof of completion here: <a href="https://www.sendtask.me/showtask/${taskId}" target="_blank">here!</a>`
     };
 
 transport.sendMail(mailOptions, (error, info) => {

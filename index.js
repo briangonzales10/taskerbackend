@@ -126,6 +126,7 @@ app.put("/update/:taskId", async function (req, res) {
 
   if (updateStatus == 'COMPLETE') {
     updateData.completedTime = fshelper.Timestamp.now();
+    emailHelper.generateMail(taskIdToUpdate);
   }
 
   if (updateStatus !== "NONE") {
