@@ -79,17 +79,27 @@ function updateProof(taskId, fileName, signedURL) {
 
 async function findUserFromTaskId(taskId) {
   return new Promise ((resolve, reject) => {
+    let submitUserId = ''
+    let taskName = ''
     let task = tasklist.doc(taskId).get();
-    let submitedUserId = task.data().submittedBy;
-    let submitUser = users.doc(submitedUserId).get();
-    if (submitUser != null) {
-      let userData = {
-        displayName: submitUser.data().displayName,
-        emailAddress: submitUser.data().emailAddress,
-        taskName: task.data().taskname
-      }
-      resolve(userData);
-    }
+    task.then((res) => {
+      console.log(`task for email: ${res.data()}`)
+      submitUserId = res.data().submittedBy;
+      taskName = res.data().taskName;
+    })
+    // let submitedUserId = task.data().submittedBy;
+    let submitUser = users.doc(submitUserId).get();
+    submitUser.then((res) => {
+      console.log(res.data());
+      if (res.data() != null) {
+        let userData = {
+          displayName: res.data().displayName,
+          emailAddress: res.data().emailAddress,
+          taskName: taskName
+        }
+        resolve(userData);
+     }
+    })
     reject()
   })
 }
