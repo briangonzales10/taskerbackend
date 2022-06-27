@@ -84,8 +84,10 @@ async function findUserFromTaskId(taskId) {
     let task = tasklist.doc(taskId).get();
     task.then((res) => {
       console.log(`task for email: ${res.data()}`)
-      submitUserId = res.data().submittedBy;
-      taskName = res.data().taskName;
+      data = res.data();
+      submitUserId = data.submittedBy;
+      taskName = data.taskname;
+      console.log("data for email" + submitUserId + taskName)
     })
     .then( () => {
       let submitUser = users.doc(submitUserId).get();
