@@ -3,18 +3,17 @@ require("dotenv").config();
 const express = require("express");
 var cors = require("cors");
 const fshelper = require("./scripts/firestoreHelper");
-const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
 
 
 let helper = require("./scripts/helper.js");
+let emailHelper = require("./scripts/emailHelper");
 let googlePlace = require("./scripts/googlePlace.js");
 let getService = require("./service/getService");
 let postService = require("./service/postService")
 
 const NO_TASKS = "No Tasks Available!";
-const uploadsPath = path.join(__dirname, 'uploads', 'proof')
+
 const upload = multer({
   storage: multer.memoryStorage(),
   dest: 'uploads/proof'
@@ -91,14 +90,7 @@ app.post("/add", async function (req, res) {
   console.log(data);
   console.log(req.body);
 
-  if (
-    !data ||
-    !data.uid ||
-    !data.taskname ||
-    !data.location ||
-    !data.category ||
-    data.isPublic == null
-  ) {
+  if (validatePost(data) == false) {
     res.status(400).send("data not valid");
     return;
   }
@@ -186,8 +178,18 @@ app.post("/upload/:taskId", async function (req, res) {
   })
 });
 
-// Get proof of task completion
-// app.get("/proof/:taskId", async function (req, res) {
-//   //const proofName = await getService.getProof(req.params.taskId)
-//   res.sendStatus(200).send('proofName')
-// })
+app.post("/email", function (req, res) {
+  let email = req.body;
+  let mailToSend = emailHelper.generateMail(email.userTo, email.subject, email.message);
+  emailHelper.sendMail(mailToSend);
+});
+
+function validatePost(data) {
+  if (
+  !data || !data.uid || !data.taskname || !data.location ||
+  !data.category ||
+  data.isPublic == null ) {
+    return false;
+  }
+  return true;
+}
