@@ -25,9 +25,9 @@ exports.generateMail = async function generateMail(taskId) {
     let mailOptions = {
         from: '"Task Me Team" <brian@sendtask.me>',
         to: `${user.displayName} <${user.emailAddress}>`,
-        subject: `Your task '${user.taskname}' was completed!`,
-        text: `Hello! Your task '${user.taskname} was completed by Brian! You can view proof of completion here: https://www.sendtask.me/showtask/${taskId}'`,
-        html: `Hello! <br /> Your task '${user.taskname} was completed by Brian! You can view proof of completion here: <a href="https://www.sendtask.me/showtask/${taskId}" target="_blank">here!</a>`
+        subject: `Your task '${user.taskName}' was completed!`,
+        text: `Hello! Your task '${user.taskName} was completed by Brian! You can view proof of completion here: https://www.sendtask.me/showtask/${taskId}'`,
+        html: `Hello! <br /> Your task '${user.taskName} was completed by Brian! You can view proof of completion here: <a href="https://www.sendtask.me/showtask/${taskId}" target="_blank">here!</a>`
     };
 
 transport.sendMail(mailOptions, (error, info) => {

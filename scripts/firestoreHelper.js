@@ -80,13 +80,13 @@ function updateProof(taskId, fileName, signedURL) {
 async function findUserFromTaskId(taskId) {
   return new Promise ((resolve, reject) => {
     let submitUserId = ''
-    let taskName = ''
+    let usertaskName = ''
     let task = tasklist.doc(taskId).get();
     task.then((res) => {
       data = res.data();
       submitUserId = data.submittedBy;
-      taskName = data.taskname;
-      console.log("data for email" + submitUserId + taskName)
+      usertaskName = data.taskname;
+      console.log("data for email" + submitUserId +' '+ taskName)
 
       let submitUser = users.doc(submitUserId).get();
       submitUser.then((res) => {
@@ -95,7 +95,7 @@ async function findUserFromTaskId(taskId) {
           let userData = {
             displayName: userDataRes.displayName,
             emailAddress: userDataRes.email,
-            taskName: taskName
+            taskName: usertaskName
           }
           console.log(`submitUser Res data: ${userData.displayName}, ${userData.emailAddress}`);
         resolve(userData);
