@@ -78,7 +78,7 @@ function updateProof(taskId, fileName, signedURL) {
 }
 
 async function findUserFromTaskId(taskId) {
-  return  new Promise ((resolve, reject) => {
+  return new Promise ((resolve, reject) => {
     let task = tasklist.doc(taskId).get();
     let submitedUserId = task.data().submittedBy;
     let submitUser = users.doc(submitedUserId).get();

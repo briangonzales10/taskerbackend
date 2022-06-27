@@ -19,7 +19,7 @@ transport.verify(function(error, success) {
     }
  });
 
-exports.generateMail = function generateMail(taskId) {
+exports.generateMail = async function generateMail(taskId) {
     let user = await fsHelper.findUserFromTaskId(taskId);
     
     let mailOptions = {
