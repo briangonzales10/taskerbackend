@@ -92,13 +92,14 @@ async function findUserFromTaskId(taskId) {
     .then( () => {
       let submitUser = users.doc(submitUserId).get();
       submitUser.then((res) => {
-        console.log(`submitUser Res data: ${res.data()}`);
-        if (res.data() != null) {
+        userDataRes = res.data();
+        if (userDataRes != null) {
           let userData = {
-            displayName: res.data().displayName,
-            emailAddress: res.data().emailAddress,
+            displayName: userDataRes.displayName,
+            emailAddress: userDataRes.emailAddress,
             taskName: taskName
           }
+          console.log(`submitUser Res data: ${userData.displayName}, ${userData.emailAddress}`);
         resolve(userData);
         }
       })
