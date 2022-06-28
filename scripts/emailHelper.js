@@ -1,13 +1,13 @@
+require("dotenv").config();
 const nodemailer = require('nodemailer');
 const fsHelper = require('./firestoreHelper')
 
 
 let transport = nodemailer.createTransport({
-    host: "smtp.mailtrap.io",
-    port: 2525,
+    service: 'gmail',
     auth: {
-      user: "e8a8b92b68d7b0",
-      pass: "0eac7bbba9c40c"
+      user: "brian.gonzales10@gmail.com",
+      pass: process.env.GMAIL_KEY
     }
   });
 
@@ -27,7 +27,7 @@ exports.generateMail = async function generateMail(taskId) {
         to: `${user.displayName} <${user.emailAddress}>`,
         subject: `Your task '${user.taskName}' was completed!`,
         text: `Hello! Your task '${user.taskName} was completed by Brian! You can view proof of completion here: https://www.sendtask.me/showtask/${taskId}'`,
-        html: `Hello! <br /> Your task '${user.taskName} was completed by Brian! You can view proof of completion here: <a href="https://www.sendtask.me/showtask/${taskId}" target="_blank">here!</a>`
+        html: `Hello! <br /> Your task '${user.taskName} was completed by Brian! You can view proof of completion here: <a href="https://www.sendtask.me/" target="_blank">here!</a>`
     };
 
 transport.sendMail(mailOptions, (error, info) => {
