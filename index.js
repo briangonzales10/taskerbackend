@@ -179,12 +179,6 @@ app.post("/upload/:taskId", async function (req, res) {
   })
 });
 
-app.post("/email", function (req, res) {
-  let email = req.body;
-  emailHelper.generateMail(email.userTo, email.subject, email.message);
-  res.status(200).send('email sent?')
-});
-
 function validatePost(data) {
   if (
   !data || !data.uid || !data.taskname || !data.location ||
