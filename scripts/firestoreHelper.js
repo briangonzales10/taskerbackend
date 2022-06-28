@@ -3,6 +3,7 @@ const fs = require("firebase-admin");
 
 const { initializeApp, applicationDefault, cert } = require("firebase-admin/app")
 const { getFirestore, Timestamp, FieldValue } = require("firebase-admin/firestore");
+const { reject } = require("firebase-tools/lib/utils");
 
   //Open DB connection
 
@@ -76,11 +77,48 @@ function updateProof(taskId, fileName, signedURL) {
   .catch((err) => console.log(err))
 }
 
+async function findUserFromTaskId(taskId) {
+  return new Promise ((resolve, reject) => {
+    let submitUserId = ''
+    let taskName = ''
+    let task = tasklist.doc(taskId).get();
+    task.then((res) => {
+      data = res.data();
+      submitUserId = data.submittedBy;
+      taskName = data.taskname;
+      console.log("data for email" + submitUserId + ' ' + taskName)
+    })
+    .then( () => {
+      let submitUser = users.doc(submitUserId).get();
+      submitUser.then((res) => {
+        userDataRes = res.data();
+        if (userDataRes != null) {
+          let userData = {
+            displayName: userDataRes.displayName,
+            emailAddress: userDataRes.email,
+            taskName: taskName
+          }
+          console.log(`submitUser Res data: ${userData.displayName}, ${userData.emailAddress}`);
+        resolve(userData);
+        }
+      })
+      .catch( (err) => {
+        console.log('Get Submit User error: ' + err)
+      })
+    })
+    .catch( (err) => {
+      console.log('Get task error: ' + err);
+      reject()
+    })
+  })
+}
+
 module.exports = {
   tasklist,
   users,
   bucket,
   uploadFile,
   Timestamp,
-  FieldValue
+  FieldValue,
+  findUserFromTaskId
 }

@@ -22,7 +22,6 @@ exports.submitTask = async function submitTask(data) {
             infolink: data.infolink, //frontend
             isPublic: booleanIsPublic, //frontend
             category: data.category,
-            completedTime: '', // Blank until completed
             submittedBy: data.uid, //front end uuid of user & required update user Tasks
         };
     console.log(taskObject);
